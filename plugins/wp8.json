@@ -1,0 +1,17 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-splashscreen": {},
+        "cordova-plugin-geolocation": {},
+        "cordova-plugin-device": {},
+        "cordova-sqlite-storage": {},
+        "cordova-plugin-network-information": {}
+    },
+    "dependent_plugins": {}
+}
