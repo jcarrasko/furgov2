@@ -14,12 +14,16 @@ var isWindows = /Windows /.test(navigator.userAgent); // Windows (8.1)
 var isIE = isWindows || isWP8;
 var isWebKit = !isIE; // TBD [Android or iOS]
 
-var scenarioList = [ isAndroid ? 'Plugin-sqlite-connector' : 'Plugin', 'HTML5', 'Plugin-android.database' ];
+// NOTE: In the core-master branch there is no difference between the default
+// implementation and implementation #2. But the test will also apply
+// the androidLockWorkaround: 1 option in the case of implementation #2.
+var scenarioList = [
+  isAndroid ? 'Plugin-implementation-default' : 'Plugin',
+  'HTML5',
+  'Plugin-implementation-2'
+];
 
-//var scenarioCount = isAndroid ? 3 : (isIE ? 1 : 2);
-//var scenarioCount = (!!window.hasWebKitBrowser) ? 2 : 1;
-var hasAndroidWebKitBrowser = isAndroid && (!!window.hasWebKitBrowser);
-var scenarioCount = hasAndroidWebKitBrowser ? 3 : ((!!window.hasWebKitBrowser) ? 2 : 1);
+var scenarioCount = (!!window.hasWebKitBrowser) ? (isAndroid ? 3 : 2) : 1;
 
 // simple tests:
 var mytests = function() {
@@ -35,7 +39,12 @@ var mytests = function() {
       // NOTE: MUST be defined in function scope, NOT outer scope:
       var openDatabase = function(name, ignored1, ignored2, ignored3) {
         if (isOldImpl) {
-          return window.sqlitePlugin.openDatabase({name: name, androidDatabaseImplementation: 2});
+          return window.sqlitePlugin.openDatabase({
+            // prevent reuse of database from default db implementation:
+            name: 'i2-'+name,
+            androidDatabaseImplementation: 2,
+            androidLockWorkaround: 1
+          });
         }
         if (isWebSql) {
           return window.openDatabase(name, '1.0', 'Test', DEFAULT_SIZE);
@@ -520,7 +529,150 @@ var mytests = function() {
         // FUTURE TODO ref: litehelpers/Cordova-sqlite-storage#232
         // test case of sql error handler returning values such as "true" (string), 1, 0, null
 
-      if (!isWebSql) {
+        it(suiteName + 'empty transaction (no callback argument) and then SELECT transaction', function (done) {
+
+          var db = openDatabase("tx-with-no-argment", "1.0", "Demo", DEFAULT_SIZE);
+
+          try {
+            // synchronous error expected:
+            db.transaction();
+
+            // not expected to get here:
+            expect(false).toBe(true);
+          } catch (err) {
+            // got error like we expected
+            expect(true).toBe(true);
+          }
+
+          // verify we can still continue
+          var gotStringLength = false; // poor man's spy
+          db.transaction(function (tx) {
+            tx.executeSql("SELECT LENGTH('tenletters') AS stringlength", [], function (tx, res) {
+              expect(res.rows.item(0).stringlength).toBe(10);
+              gotStringLength = true;
+            });
+          }, function (error) {
+            // not expected:
+            expect(false).toBe(true);
+          }, function () {
+            // expected result (transaction committed ok)
+            expect(true).toBe(true);
+            expect(gotStringLength).toBe(true);
+            done();
+          });
+        });
+
+        it(suiteName + 'empty readTransaction (no callback argument) and then SELECT transaction', function (done) {
+
+          var db = openDatabase("read-tx-with-no-argment", "1.0", "Demo", DEFAULT_SIZE);
+
+          try {
+            // synchronous error expected:
+            db.readTransaction();
+
+            // not expected to get here:
+            expect(false).toBe(true);
+          } catch (err) {
+            // got error like we expected
+            expect(true).toBe(true);
+          }
+
+          // verify we can still continue
+          var gotStringLength = false; // poor man's spy
+          db.readTransaction(function (tx) {
+            tx.executeSql("SELECT LENGTH('tenletters') AS stringlength", [], function (tx, res) {
+              expect(res.rows.item(0).stringlength).toBe(10);
+              gotStringLength = true;
+            });
+          }, function (error) {
+            // not expected:
+            expect(false).toBe(true);
+          }, function () {
+            // expected result (transaction committed ok)
+            expect(true).toBe(true);
+            expect(gotStringLength).toBe(true);
+            done();
+          });
+        });
+
+        it(suiteName + 'empty transaction (no sql statements) and then SELECT transaction', function (done) {
+
+          var db = openDatabase("empty-tx", "1.0", "Demo", DEFAULT_SIZE);
+
+          db.transaction(function(tx) {
+            expect(true).toBe(true);
+          }, function(err) {
+            // not expected:
+            expect(false).toBe(true);
+            done();
+          }, function() {
+            // as expected:
+            expect(true).toBe(true);
+
+            // verify we can still continue
+            var gotStringLength = false; // poor man's spy
+            db.transaction(function (tx) {
+              tx.executeSql("SELECT LENGTH('tenletters') AS stringlength", [], function (tx, res) {
+                expect(res.rows.item(0).stringlength).toBe(10);
+                gotStringLength = true;
+              });
+            }, function (error) {
+              // not expected:
+              expect(false).toBe(true);
+            }, function () {
+              // expected result (transaction committed ok)
+              expect(true).toBe(true);
+              expect(gotStringLength).toBe(true);
+              done();
+            });
+
+          });
+
+        });
+
+        // Check fix for litehelpers/Cordova-sqlite-storage#409:
+        it(suiteName + 'empty readTransaction (no sql statements) and then SELECT transaction', function (done) {
+
+          var db = openDatabase("empty-read-tx", "1.0", "Demo", DEFAULT_SIZE);
+
+          db.readTransaction(function(tx) {
+            expect(true).toBe(true);
+          }, function(err) {
+            // not expected:
+            expect(false).toBe(true);
+            done();
+          }, function() {
+            // as expected:
+            expect(true).toBe(true);
+
+            // verify we can still continue
+            var gotStringLength = false; // poor man's spy
+            db.transaction(function (tx) {
+              tx.executeSql("SELECT LENGTH('tenletters') AS stringlength", [], function (tx, res) {
+                expect(res.rows.item(0).stringlength).toBe(10);
+                gotStringLength = true;
+              });
+            }, function (error) {
+              // not expected:
+              expect(false).toBe(true);
+            }, function () {
+              // expected result (transaction committed ok)
+              expect(true).toBe(true);
+              expect(gotStringLength).toBe(true);
+              done();
+            });
+
+          });
+
+        });
+    });
+
+  }
+
+  describe('Plugin - BASIC sqlitePlugin.openDatabase test(s)', function() {
+
+    var suiteName = 'plugin: ';
+
         // NOTE: this was an issue due to the inconsistency ng cordova documentation and source code which
         // triggered problems reported in litehelpers/Cordova-sqlite-storage#246 and
         // litehelpers/Cordova-sqlcipher-adapter#5.
@@ -546,10 +698,8 @@ var mytests = function() {
               done();
           }
         }, MYTIMEOUT);
-      }
+  });
 
-    });
-  };
 }
 
 if (window.hasBrowser) mytests();

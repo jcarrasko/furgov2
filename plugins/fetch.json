@@ -15,26 +15,26 @@
         "is_top_level": true,
         "variables": {}
     },
-    "cordova-plugin-device": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-device@1.1.0"
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
     "cordova-sqlite-storage": {
         "source": {
             "type": "registry",
-            "id": "cordova-sqlite-storage@0.7.14"
+            "id": "cordova-sqlite-storage@0.8.2"
         },
         "is_top_level": true,
         "variables": {}
     },
     "cordova-plugin-network-information": {
         "source": {
-            "type": "registry",
-            "id": "cordova-plugin-network-information@1.1.0"
+            "type": "local",
+            "path": "/home/jcarrasco/intel/XDK/xdk/components/server/cordova-plugins/cordova-plugin-network-information"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-device": {
+        "source": {
+            "type": "local",
+            "path": "/home/jcarrasco/intel/XDK/xdk/components/server/cordova-plugins/cordova-plugin-device"
         },
         "is_top_level": true,
         "variables": {}

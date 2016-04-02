@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015: Christopher J. Brody (aka Chris Brody)
+ * Copyright (c) 2012-2016: Christopher J. Brody (aka Chris Brody)
  * Copyright (C) 2011 Davide Bertola
  *
  * This library is available under the terms of the MIT License (2008).
@@ -16,6 +16,7 @@
 #ifdef READ_BLOB_AS_BASE64
 #import <Cordova/NSData+Base64.h>
 #endif
+
 
 @implementation SQLitePlugin
 
@@ -81,7 +82,27 @@
     return dbPath;
 }
 
+-(void)echoStringValue: (CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult * pluginResult = nil;
+    NSMutableDictionary * options = [command.arguments objectAtIndex:0];
+
+    NSString * string_value = [options objectForKey:@"value"];
+
+    NSLog(@"echo string value: %@", string_value);
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:string_value];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId: command.callbackId];
+}
+
 -(void)open: (CDVInvokedUrlCommand*)command
+{
+    [self.commandDelegate runInBackground:^{
+        [self openNow: command];
+    }];
+}
+
+-(void)openNow: (CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
     NSMutableDictionary *options = [command.arguments objectAtIndex:0];
@@ -145,8 +166,14 @@
     // NSLog(@"open cb finished ok");
 }
 
-
 -(void) close: (CDVInvokedUrlCommand*)command
+{
+    [self.commandDelegate runInBackground:^{
+        [self closeNow: command];
+    }];
+}
+
+-(void)closeNow: (CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
     NSMutableDictionary *options = [command.arguments objectAtIndex:0];
@@ -178,6 +205,13 @@
 }
 
 -(void) delete: (CDVInvokedUrlCommand*)command
+{
+    [self.commandDelegate runInBackground:^{
+        [self deleteNow: command];
+    }];
+}
+
+-(void)deleteNow: (CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
     NSMutableDictionary *options = [command.arguments objectAtIndex:0];
@@ -211,11 +245,11 @@
 -(void) backgroundExecuteSqlBatch: (CDVInvokedUrlCommand*)command
 {
     [self.commandDelegate runInBackground:^{
-        [self executeSqlBatch: command];
+        [self executeSqlBatchNow: command];
     }];
 }
 
--(void) executeSqlBatch: (CDVInvokedUrlCommand*)command
+-(void) executeSqlBatchNow: (CDVInvokedUrlCommand*)command
 {
     NSMutableDictionary *options = [command.arguments objectAtIndex:0];
     NSMutableArray *results = [NSMutableArray arrayWithCapacity:0];

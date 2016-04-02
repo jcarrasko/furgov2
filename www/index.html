@@ -1,0 +1,215 @@
+<!--
+Club Camper Furgovw's Mobile App
+Copyright (C) 2012, Club Camper Furgovw (furgovw.org)
+Created by Javier Montes (@mooontes - http://mooontes.com)
+Updated by José Carrasco (@jcarrasko )
+-->
+<!DOCTYPE html>
+<html manifest="CACHE-MANIFEST">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+
+    <!-- <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1"> -->
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=no">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, minimum-scale=1, maximum-scale=2"> -->
+
+    <style>
+        /* following three (cascaded) are equivalent to above three meta viewport statements */
+        /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html */
+        /* see http://dev.w3.org/csswg/css-device-adapt/ */
+        @-ms-viewport { width: 100vw ; min-zoom: 100% ; zoom: 100% ; }          @viewport { width: 100vw ; min-zoom: 100% zoom: 100% ; }
+        @-ms-viewport { user-zoom: fixed ; min-zoom: 100% ; }                   @viewport { user-zoom: fixed ; min-zoom: 100% ; }
+        /*@-ms-viewport { user-zoom: zoom ; min-zoom: 100% ; max-zoom: 200% ; }   @viewport { user-zoom: zoom ; min-zoom: 100% ; max-zoom: 200% ; }*/
+    </style>
+
+ 
+
+
+    <link rel="stylesheet" type="text/css" href="jqm/jquery.mobile-min.css"/>
+
+    <!--script type="text/javascript" src="cordova.js"></script-->
+    <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="js/jquery.jsonp.js"></script>
+    <script type="text/javascript" src="jqm/jquery.mobile-min.js"></script>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+
+    <script type="text/javascript" src="js/markerclusterer_compiled.js"></script>
+    <script type="text/javascript" src="js/furgovw.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+
+
+    <script type="text/javascript">
+        app.initialize();
+    </script>
+
+    <title>Furgovw Furgoperfectos v2</title>
+
+ 
+ 
+
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less">
+
+    <!-- IMPORTANT: Do not include a weinre script tag as part of your release builds! -->
+    <!-- Place your remote debugging (weinre) script URL from the Test tab here, if it does not work below -->
+    <!-- <script src="http://debug-software.intel.com/target/target-script-min.js#insertabiglongfunkynumberfromthexdkstesttab"></script> -->
+
+    <!-- Recommended location for your JavaScript libraries -->
+    <!-- These library references (below) are just examples to give you the general idea... -->
+    <!-- <script src="lib/mc/hammer.js"></script> -->
+    <!-- <script src="lib/ft/fastclick.js"></script> -->
+
+    <!--
+* cordova.js is a phantom lib for "Cordova HTML5 web app," it does nothing in a "Standard HTML5 web app"
+* Seeing a "Failed to load resource: net::ERR_FILE_NOT_FOUND" message caused by this "cordova.js" script?
+* The cordova.js script is required if you convert your "Standard HTML5" project into a "Cordova" project.
+* You can safely ignore the error or comment out this line if you will not be developing a Cordova app.
+-->
+    <script src="cordova.js" id="xdkJScordova_"></script>
+
+    <script src="js/app.js"></script>
+    <!-- for your event code, see README and file comments for details -->
+    <script src="js/init-app.js"></script>
+    <!-- for your init code, see README and file comments for details -->
+    <script src="xdk/init-dev.js"></script>
+    <!-- normalizes device and document ready events, see file for details -->
+</head>
+<body>
+
+
+
+<div data-role="page" id="home">
+    <div data-role="header" data-position="fixed">
+        <h1>Furgoperfectos v2.0</h1>
+        
+        
+        
+        <div class="widget-container content-area horiz-area wrapping-col right">
+            <a class="widget uib_w_3 d-margins" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-mini="true" data-icon="gear" data-iconpos="notext" id="show_prefs"></a>
+          </div>
+    </div>
+
+    <div data-role="content">
+
+        <img id="fvw_logo" src="img/logo_furgovw.png">
+
+        <div>
+            <p id="fvw_user_location_input">Barcelona, Catalunya</p>
+        </div>
+
+
+
+        <div data-role="controlgroup" class="uib-jqm-flex widget uib_w_4 d-margins"
+             data-uib="jquery_mobile/button_group" data-ver="0" data-type="horizontal" id="buttons">
+
+            <a id="fvw_user_location_button" class="widget uib_w_5" data-uib="jquery_mobile/button" data-ver="0" data-role="button"
+               data-icon="location" data-mini="true" data-iconpos="top">Proximas</a>
+            <a class="widget uib_w_6" data-uib="jquery_mobile/button" data-ver="0" data-role="button" href="#map_page"
+               data-icon="navigation" data-iconpos="top" data-mini="true">Mapa</a>
+            <a  id="fvw_all_spots_button" class="widget uib_w_7" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-mini="true" href="#search-page"
+               data-icon="search" data-iconpos="top">Buscar</a>
+
+        </div>
+<!--
+        <a id="fvw_user_location_button" class="widget uib_w_8 d-margins" data-uib="jquery_mobile/button" data-ver="0"
+           href="#" data-role="button" data-icon="bullets" data-iconpos="left" data-mini="true">Veure Llistat</a> -->
+
+    </div>
+
+
+</div>
+
+<!-- Map Page -->
+<div id="map_page" data-role="page">
+    <div data-role="header" data-add-back-btn="true" data-position="fixed">
+        <h1>furgovw.org</h1>
+    </div>
+
+    <div id="map_content" data-role="content">
+        <div id="map">Buscando ubicación..</div>
+    </div>
+</div>
+
+
+<!-- Spots List Page -->
+<div id="spots-list" data-role="page">
+    <div data-role="header" data-position="fixed" data-add-back-btn="false">
+        <h1 id="fvw_location_name">furgovw.org</h1>
+    </div>
+
+    <div data-role="content">
+        <ul id="spots_list_list" data-role="listview"  data-inset="true" data-filter="true">
+        </ul>
+    </div>
+</div>
+
+<div id="spot-detail" data-id="" data-role="page">
+    <div data-role="header" data-position="fixed" data-add-back-btn="false">
+        <h1>furgovw.org</h1>
+    </div>
+
+    <div data-role="content">
+        <h1 id="fvw_spot_name"></h1>
+        <h3 id="fvw_spot_distance"></h3>
+        <img id="fvw_spot_picture">
+
+        <p id="fvw_spot_author"></p>
+        <p id="fvw_spot_msg_body"></p>
+
+    </div>
+
+    <div data-role="footer" data-position="fixed" class="container-group inner-element uib_w_11" data-uib="jquery_mobile/footer" data-ver="0">
+        <h1></h1>
+        <div class="widget-container wrapping-col single-centered">
+            <div data-role="controlgroup" class="uib-jqm-flex widget uib_w_12 d-margins" data-uib="jquery_mobile/button_group" data-ver="0" data-type="horizontal">
+                <a class="widget uib_w_13" id="fvw_navigator_forum_link"  data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-icon="navigation" data-iconpos="top">Navegar</a>
+                <a class="widget uib_w_14" id="fvw_spot_forum_link" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-icon="action" data-iconpos="top">FurgoVW</a>
+                <a class="widget uib_w_15" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-icon="heart" data-iconpos="top">Favoritos</a>
+            </div>
+        </div>
+        <div class="widget-container content-area horiz-area wrapping-col left"></div>
+        <div class="widget-container content-area horiz-area wrapping-col right"></div>
+    </div>
+
+
+
+
+
+
+</div>
+
+<div id="location-detail" data-id="" data-role="page">
+    <div data-role="header" data-position="fixed" data-add-back-btn="true">
+        <h1 id="fvw_location_name">furgovw.org</h1>
+    </div>
+
+    <div data-role="content">
+        <h1 id="fvw_location_name2"></h1>
+
+        <h3 id="fvw_spot_distance2"></h3>
+        <a id="fvw_spot_forum_lin2k" data-role="button" target="_blank"></a>
+
+    </div>
+
+
+</div>
+
+<!-- search page -->
+<div data-role="page" id="search-page">
+    <div data-role="header"  data-add-back-btn="true" data-position="fixed">
+        <h1>Furgoperfectos v2.0</h1>
+    </div>
+
+    <div data-role="content">
+        <ul id="all_spots_list" data-role="listview"  data-inset="true" data-filter="true">
+        </ul>
+    </div>
+</div>
+    
+    
+    
+</body>
+</html>

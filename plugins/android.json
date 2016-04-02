@@ -7,11 +7,21 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-splashscreen": {},
-        "cordova-plugin-geolocation": {},
-        "cordova-plugin-device": {},
-        "cordova-sqlite-storage": {},
-        "cordova-plugin-network-information": {}
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-sqlite-storage": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        }
     },
     "dependent_plugins": {}
 }

@@ -9,8 +9,6 @@
 # N.B. if you functionally change this script you _must_ change .\bin\test.sh too.
 #
 
-# N.B. if you functionally change this script you _must_ change ./bin/test.ps1 too.
-
 platform=$1
 
 if [[ -z $platform ]]; then
