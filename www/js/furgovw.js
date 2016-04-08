@@ -1,7 +1,8 @@
 /**
  * Club Camper Furgovw's Mobile App
  * Copyright (C) 2012, Club Camper Furgovw (furgovw.org)
- * Created by Javier Montes (@mooontes - http://mooontes.com)
+ * Original by Javier Montes (@mooontes - http://mooontes.com)
+ * Version 2 by José Carrasco (@jcarrasko )
  */
 var furgovw = {};
 var map;
@@ -10,6 +11,11 @@ var map;
 
 (function ($) {
 
+    // Defalts
+    
+    var defaultLocation="Barcelona";
+    
+    
     // Variables
     furgovw.markers = [];
     furgovw.isOnline = false;
@@ -60,16 +66,8 @@ var map;
  
         console.log('Initializing Device...');
 
-         window.sqlitePlugin.openDatabase({name: 'furgo.db', iosDatabaseLocation: 'default'}, function(db) {
-  db.transaction(function(tx) {
-    console.log("into db transaction");
-  }, function(err) {
-    console.log('Open database ERROR: ' + JSON.stringify(err));
-  });
-});
-      
-         console.log('next Initializing Device...');
-        
+         
+        // Canviar per un update reload...
         $('#fvw_logo')
             .on('click', function () {
                 furgovw.main();
@@ -86,7 +84,7 @@ var map;
             furgovw.userLatitude = furgovw.marker.position.lat();
             furgovw.userLongitude = furgovw.marker.position.lng();
 
-            furgovw.loadSpots();
+           // furgovw.loadSpots(); <-- Not needed
 
             //     $('a#fvw_user_location_button')<a id="fvw_select_location_button" href="#map_page" data-role="button" data-icon="search" data-iconpos="notext">.attr('href', '#spots-list');
 
@@ -102,7 +100,7 @@ var map;
 
 
         furgovw.geocoder = new google.maps.Geocoder();
-        furgovw.main();
+        //furgovw.main();
 
 
     };
@@ -187,6 +185,7 @@ var map;
                 };
 
 
+              
                 if (furgovw.geocoder) {
 
                     furgovw.geocoder.geocode({
@@ -197,15 +196,17 @@ var map;
                     });
                 }
 
-
+                 
                 furgovw.loadSpots();
                 $('a#fvw_user_location_button')
                     .attr('href', '#spots-list');
+                
                 furgovw.loadAllSpots();
                 $('a#fvw_all_spots_button')
                     .attr('href', '#search-page');
-
-                map.setCenter(initialLocation);
+                  
+               // map.setCenter(initialLocation);
+                    
             }, function () {
                 handleNoGeolocation(browserSupportFlag);
             });
@@ -219,6 +220,8 @@ var map;
             map.setCenter(initialLocation);
 
         }
+        
+         
     };
 
 
@@ -313,7 +316,7 @@ var map;
             contentType: "application/json; charset=utf-8"
         });
 
-        mapApiUrl =//"http://www.furgovw.org/api.php?getEverything=&callback=_jqjsp";
+        mapApiUrl =
              this.options.apiUrl +
             '?latitude=' + encodeURIComponent(furgovw.userLatitude) +
             '&longitude=' + encodeURIComponent(furgovw.userLongitude);
@@ -325,8 +328,7 @@ var map;
             success: function (spots) {
                 console.log('furgovw: Loaded data from api');
                 //furgovw.spots = spots;
-                //console.log("Spots list A");
-                //console.log(furgovw.spots);
+                
 
 
                 $.each(spots, function (index, spot) {

@@ -13,13 +13,13 @@
         "cordova-plugin-geolocation": {
             "PACKAGE_NAME": "io.cordova.hellocordova"
         },
-        "cordova-sqlite-storage": {
-            "PACKAGE_NAME": "io.cordova.hellocordova"
-        },
         "cordova-plugin-network-information": {
             "PACKAGE_NAME": "io.cordova.hellocordova"
         },
         "cordova-plugin-device": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-sqlite-legacy": {
             "PACKAGE_NAME": "io.cordova.hellocordova"
         }
     },

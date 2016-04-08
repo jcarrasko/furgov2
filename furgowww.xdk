@@ -6,7 +6,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "",
       "projectGuid": "a1301560-20c4-4396-bb6c-41e7fa359474",
-      "lastModifiedDate": 1459010471912,
+      "lastModifiedDate": 1459809368685,
       "creationDate": 1440369313409
     },
     "sourceDirectory": "www",
@@ -99,26 +99,6 @@
         "description": "Cordova Geolocation Plugin"
       },
       {
-        "id": "cordova-sqlite-storage",
-        "name": "Cordova sqlite storage plugin (core version)",
-        "version": "0.8.2",
-        "originType": "cordova.io",
-        "origin": "cordova-sqlite-storage",
-        "gitref": "",
-        "paramvals": {},
-        "sourceLocation": "plugins/cordova-sqlite-storage",
-        "selectedState": "Included",
-        "checksum": "a2566725",
-        "dependsOn": [],
-        "topLevel": true,
-        "cordovaVersion": ">=3.3.0",
-        "author": "Litehelpers/Various",
-        "permissions": {},
-        "description": "Native interface to SQLite for PhoneGap/Cordova. Allows you to use more storage and provides more flexibility than the standard Web SQL database (window.openDatabase).",
-        "data": {},
-        "dependedBy": []
-      },
-      {
         "id": "cordova-plugin-network-information",
         "name": "Network Information",
         "version": "1.2.0",
@@ -137,6 +117,26 @@
           ]
         },
         "description": "Cordova Network Information Plugin",
+        "data": {},
+        "dependedBy": []
+      },
+      {
+        "id": "cordova-sqlite-legacy",
+        "name": "Cordova sqlite storage plugin (legacy version)",
+        "version": "0.7.18",
+        "originType": "cordova.io",
+        "origin": "cordova-sqlite-legacy",
+        "gitref": "",
+        "paramvals": {},
+        "sourceLocation": "plugins/cordova-sqlite-legacy",
+        "selectedState": "Included",
+        "checksum": "822152c2",
+        "dependsOn": [],
+        "topLevel": true,
+        "cordovaVersion": ">=3.3.0",
+        "author": "Litehelpers/Various",
+        "permissions": {},
+        "description": "Native interface to SQLite for PhoneGap/Cordova. Allows you to use more storage and provides more flexibility than the standard Web SQL database (window.openDatabase).",
         "data": {},
         "dependedBy": []
       }

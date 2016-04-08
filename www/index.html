@@ -1,8 +1,10 @@
 <!--
-Club Camper Furgovw's Mobile App
-Copyright (C) 2012, Club Camper Furgovw (furgovw.org)
-Created by Javier Montes (@mooontes - http://mooontes.com)
-Updated by José Carrasco (@jcarrasko )
+/**
+ * Club Camper Furgovw's Mobile App
+ * Copyright (C) 2012, Club Camper Furgovw (furgovw.org)
+ * Original by Javier Montes (@mooontes - http://mooontes.com)
+ * Version 2 by José Carrasco (@jcarrasko )
+ */
 -->
 <!DOCTYPE html>
 <html manifest="CACHE-MANIFEST">
@@ -27,8 +29,12 @@ Updated by José Carrasco (@jcarrasko )
 
 
     <link rel="stylesheet" type="text/css" href="jqm/jquery.mobile-min.css"/>
+    
+    
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less">
 
-    <!--script type="text/javascript" src="cordova.js"></script-->
+    <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
     <script type="text/javascript" src="js/jquery.jsonp.js"></script>
     <script type="text/javascript" src="jqm/jquery.mobile-min.js"></script>
@@ -47,11 +53,6 @@ Updated by José Carrasco (@jcarrasko )
 
     <title>Furgovw Furgoperfectos v2</title>
 
- 
- 
-
-    <link rel="stylesheet" href="css/app.css">
-    <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less">
 
     <!-- IMPORTANT: Do not include a weinre script tag as part of your release builds! -->
     <!-- Place your remote debugging (weinre) script URL from the Test tab here, if it does not work below -->
@@ -68,13 +69,15 @@ Updated by José Carrasco (@jcarrasko )
 * The cordova.js script is required if you convert your "Standard HTML5" project into a "Cordova" project.
 * You can safely ignore the error or comment out this line if you will not be developing a Cordova app.
 -->
+    
+    <!--
     <script src="cordova.js" id="xdkJScordova_"></script>
 
-    <script src="js/app.js"></script>
+   <!-- <script src="js/app.js"></script>-->
     <!-- for your event code, see README and file comments for details -->
-    <script src="js/init-app.js"></script>
+   <!-- <script src="js/init-app.js"></script>-->
     <!-- for your init code, see README and file comments for details -->
-    <script src="xdk/init-dev.js"></script>
+   <!-- <script src="xdk/init-dev.js"></script> -->
     <!-- normalizes device and document ready events, see file for details -->
 </head>
 <body>

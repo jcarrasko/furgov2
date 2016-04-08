@@ -7,25 +7,93 @@ var app = {
     initialize: function() {
         console.log('initialize');
         this.bindEvents();
-    },
-
-    bindEvents: function() {
+        
+    }, bindEvents: function() {
         console.log('bindEvents');
         document.addEventListener("deviceready", this.onDeviceReady, true);
     },
 
-    onDeviceReady: function() {
-        console.log('Starting onDeviceReady!');
-       
-        furgovw.deviceready();
+    onDeviceReady: function () {
+
+    console.log('Starting onDeviceReady!');
+        
+        
+        
+        
+    var db = window.sqlitePlugin.openDatabase({name: "demo.db",
+        iosDatabaseLocation: "default"});
+
+    db.transaction(function(tx) {
+
+        console.log("create table");
+        tx.executeSql("CREATE TABLE IF NOT EXISTS demo (id integer primary key, data text, data_num integer)", [], function(tx, res){
+
+            console.log("insert data");
+            tx.executeSql("INSERT INTO demo (id, data, data_num) VALUES (?,?,?)", [1, "test", 100], function(tx,res){
+
+                console.log("retrieve data");
+                tx.executeSql("SELECT * FROM demo WHERE id = ?", [1], function(tx, res){
+                    for(var iii = 0; iii < res.rows.length; iii++)
+                    {
+                        console.log("retrieve data in");
+                        console.log(res.rows.item(iii).id);
+                        console.log(res.rows.item(iii).data);
+                        console.log(res.rows.item(iii).data_num);
+                    }
+                });
+
+            });
+
+        });
+
+    }, function(err){
+
+        //errors for all transactions are reported here
+        alert("Error: " + err.message);
+
+    });
+        
+        
+        
+    furgovw.deviceready();
+
          
    
-        
-  
-  
-        console.log('welcome!');
-    }
-    
- 
+             
+
+    /*
+
+    sqlitePlugin.openDatabase({
+        name: 'furgo.db',
+        iosDatabaseLocation: 'default'
+    }, function (db) {
+        db.transaction(function (tx) {
+            console.log("Creating DB if no exists");
+
+            // Create the database if doesn't exist
+            tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real,html text,htmlp text,link text,image text,author text,width integer,lenght integer,destomtom text,id_member text, date text,topic_id integer)");
+
+            console.log("inserting1");
+            tx.executeSql('INSERT INTO SPOTS (id, name) VALUES (1, "spot name 1")');
+            console.log("inserting2");
+            tx.executeSql('INSERT INTO SPOTS (id, name) VALUES (2, "spot name 2")');
+
+
+        });
+        console.log("querying 1");
+        db.transaction(function (txi) {
+            console.log("querying 2");
+
+            txi.executeSql('SELECT * FROM SPOTS WHERE id=1', [], function (txi, results) {
+                var len = results.rows.length;
+                console.log("len" + len);
+
+            });
+        });
+
+    });
+    console.log("end DB"); */
+
+}
 
 };
