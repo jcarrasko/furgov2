@@ -1,0 +1,40 @@
+{
+  "name": "cordova-sqlite-legacy",
+  "version": "0.7.18",
+  "description": "Native interface to SQLite for PhoneGap/Cordova (legacy version)",
+  "cordova": {
+    "id": "cordova-sqlite-legacy",
+    "platforms": [
+      "android",
+      "ios",
+      "windows",
+      "wp8",
+      "wp7"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/litehelpers/Cordova-sqlite-legacy.git"
+  },
+  "keywords": [
+    "sqlite",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-windows",
+    "cordova-wp8",
+    "cordova-wp7"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.3.0"
+    }
+  ],
+  "author": "various",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/litehelpers/Cordova-sqlite-legacy/issues"
+  },
+  "homepage": "https://github.com/litehelpers/Cordova-sqlite-legacy"
+}
