@@ -16,16 +16,52 @@ var app = {
     onDeviceReady: function () {
 
     console.log('Starting onDeviceReady!');
+     
         
-        
-        
-        
-    var db = window.sqlitePlugin.openDatabase({name: "demo.db",
-        iosDatabaseLocation: "default"});
+/*    var db = openDatabase('mydatabase', '1.0', 'my db', 2*1024*1024);
+        //db.openDatabase({name: "demo.db",
+        //iosDatabaseLocation: "default"});
 
     db.transaction(function(tx) {
 
-        console.log("create table");
+      
+       console.log("Creating DB if no exists");
+
+            // Create the database if doesn't exist
+            tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real,html text,htmlp text,link text,image text,author text,width integer,lenght integer,destomtom text,id_member text, date text,topic_id integer)");
+
+            console.log("inserting1");
+            tx.executeSql('INSERT OR REPLACE INTO SPOTS (id, name) VALUES (1, "spot name 1")');
+            console.log("inserting2");
+            tx.executeSql('INSERT OR REPLACE INTO SPOTS (id, name) VALUES (2, "spot name 2")'); 
+            console.log("inserting3");
+            tx.executeSql('INSERT OR REPLACE INTO SPOTS (id, name) VALUES (3, "spot name 3")'); 
+            console.log("querying ");
+      
+        
+        
+          }, function(err){
+
+        //errors for all transactions are reported here
+        console.log("Error: " + err.message);
+
+    });
+         db.transaction(function(tx) {
+            tx.executeSql('SELECT * FROM SPOTS ',[], function (tx, results) {
+             if(results.rows.length > 0) {
+                for(var i = 0; i < results.rows.length; i++) {
+                    console.log("Result -> " + results.rows.item(i).name + " " + results.rows.item(i).id);
+                }
+            }
+            });
+        
+        
+     
+        
+
+        
+        
+           console.log("create table");
         tx.executeSql("CREATE TABLE IF NOT EXISTS demo (id integer primary key, data text, data_num integer)", [], function(tx, res){
 
             console.log("insert data");
@@ -44,15 +80,15 @@ var app = {
 
             });
 
-        });
+        }); 
 
     }, function(err){
 
         //errors for all transactions are reported here
-        alert("Error: " + err.message);
+        console.log("Error: " + err.message);
 
     });
-        
+        */
         
         
     furgovw.deviceready();

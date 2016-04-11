@@ -100,7 +100,7 @@ var map;
 
 
         furgovw.geocoder = new google.maps.Geocoder();
-        //furgovw.main();
+        furgovw.main();
 
 
     };
@@ -116,10 +116,11 @@ var map;
 
         if (status == google.maps.GeocoderStatus.OK) {
             console.log('Ok geocoder');
-            if (results[1]) {
-                var reverse_geo = results[1];
+            if (results[0]) {  // <---- 0 or 1 ?? 
+                var reverse_geo = results[0];
                 console.log('Extracting data');
-                var my_place = reverse_geo.address_components[0].long_name + ', ' + reverse_geo.address_components[1].long_name;
+                console.log(results);
+                var my_place = reverse_geo.address_components[1].long_name + ', ' + reverse_geo.address_components[2].long_name;
                 console.log("Place is " + my_place);
                 $('#fvw_user_location_input').text(my_place);
                 $('#fvw_location_name').html(my_place);
@@ -198,8 +199,14 @@ var map;
 
                  
                 furgovw.loadSpots();
-                $('a#fvw_user_location_button')
-                    .attr('href', '#spots-list');
+                
+                // updating database
+                
+                furgovw.updateDatabase;
+                
+                
+             //   $('a#fvw_user_location_button')
+             //       .attr('href', '#spots-list');
                 
                 furgovw.loadAllSpots();
                 $('a#fvw_all_spots_button')
@@ -253,6 +260,162 @@ var map;
         return dataSource;
     };
     
+    // Updates all the info from the source
+    // Put all this information in the DB
+    // Later, we'll query when we need
+    
+    
+    furgovw.updateDatabase = function () {
+        
+        
+        mapApiUrl =furgovw.getDataSource();
+        console.log("Loading all spots from Datasource:"+mapApiUrl);
+        
+        // Open Database
+        var db = openDatabase('furgodb', '1.0', 'my db', 2*1024*1024);
+
+        
+        // Creates the Database if no Exist
+        
+        db.transaction(function(tx) {
+        
+            tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real,html text,htmlp text,link text,image text,author text,width integer,lenght integer,destomtom text,id_member text, date text,topic_id integer)");
+        
+           }, function(err){
+
+            //errors Creating DB
+            console.log("FPv2. Error creating the DB");
+            console.log("FPv2. Error: " + err.message);
+
+        });
+        
+        // Querying the source
+
+        $.ajaxSetup({
+            scriptCharset: "utf-8",
+            contentType: "application/json; charset=utf-8"
+        });
+        
+        
+        $.getJSON(mapApiUrl, function (spots) {
+            
+            
+            // Fills the DB
+            db.transaction(function(tx) {
+
+                // Update the spots array
+                furgovw.spots = spots; // <- not needed ?
+             
+                $.each(spots, function (index, spot) {
+
+                    // calculate the distance
+                    spot.distance = furgovw.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.lng, spot.lat);
+                    
+                    
+                   /* $('#all_spots_list')
+                        .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '<img class="spots_list_picture" src="http://www.furgovw.org/tt.php?src=' + encodeURIComponent(spot.imagen) + '&w=80&h=80"></a></li>'); 
+                        
+                        
+                        $('#all_spots_list')
+                        .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '"><img class="spots_list_picture" src="' +  furgovw.bigIcons[spot.icono] + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '</p>'+spot.destomtom+'</p></a></li>'); 
+                        
+                    */
+                    
+                    console.log("inserting1");
+                    tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude,destomtom) VALUES ("+spot.id+","+spot.icono+",'"+spot.nombre+"',"+spot.lat+","+spot.lng+",'"+spot.destomtom+"')");
+                    
+                   
+                    
+                   
+                    
+                    
+                });
+
+               
+                
+                
+                
+                
+                }, function(err){
+
+                //errors for all transactions are reported here
+                 console.log("Error: " + err.message);
+
+                });
+                
+         
+            /* ,
+                        error: function() {
+                            popErrorMessage('Lo siento, parece que hay un problema con la conexión a furgovw.org');
+                            return;
+                              
+                    }*/
+        });
+        
+        
+ /*   var db = openDatabase('mydatabase', '1.0', 'my db', 2*1024*1024);
+        //db.openDatabase({name: "demo.db",
+        //iosDatabaseLocation: "default"});
+
+    db.transaction(function(tx) {
+
+       
+
+           
+
+           
+         db.transaction(function(tx) {
+            tx.executeSql('SELECT * FROM SPOTS ',[], function (tx, results) {
+             if(results.rows.length > 0) {
+                for(var i = 0; i < results.rows.length; i++) {
+                    console.log("Result -> " + results.rows.item(i).name + " " + results.rows.item(i).id);
+                }
+            }
+            });*/
+        
+        
+     
+        
+
+        
+        
+        /*  console.log("create table");
+        tx.executeSql("CREATE TABLE IF NOT EXISTS demo (id integer primary key, data text, data_num integer)", [], function(tx, res){
+
+            console.log("insert data");
+            tx.executeSql("INSERT INTO demo (id, data, data_num) VALUES (?,?,?)", [1, "test", 100], function(tx,res){
+
+                console.log("retrieve data");
+                tx.executeSql("SELECT * FROM demo WHERE id = ?", [1], function(tx, res){
+                    for(var iii = 0; iii < res.rows.length; iii++)
+                    {
+                        console.log("retrieve data in");
+                        console.log(res.rows.item(iii).id);
+                        console.log(res.rows.item(iii).data);
+                        console.log(res.rows.item(iii).data_num);
+                    }
+                });
+
+            });
+
+        });
+
+    }, function(err){
+
+        //errors for all transactions are reported here
+        console.log("Error: " + err.message);
+
+    });*/
+        
+        
+        
+        
+    };
+    
+    
+    
+    
+    
     
     /* function
     / Load all spots from datasource
@@ -286,7 +449,7 @@ var map;
                         .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '<img class="spots_list_picture" src="http://www.furgovw.org/tt.php?src=' + encodeURIComponent(spot.imagen) + '&w=80&h=80"></a></li>'); */
                     
                     $('#all_spots_list')
-                        .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '"><img class="spots_list_picture" src="' +  furgovw.bigIcons[spot.icono] + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '</p>'+spot.destomtom+'</p></a></li>');
+                        .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '"><img class="spots_list_picture" src="data/thumbs/' +  spot.id + '.jpg">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '</p>'+spot.destomtom+'</p></a></li>');
                     
                     
                 });
@@ -337,10 +500,10 @@ var map;
                             .toFixed(1) + ' kms</p>' + '<img class="spots_list_picture" src="http://www.furgovw.org/tt.php?src=' + encodeURIComponent(spot.imagen) + '&w=80&h=80"></a></li>');
                 });
 
-               // $('#spots_list_list')
-                 //   .listview('refresh', true);
-                $('#fvw_user_location_button')
-                    .attr('href', '#spots-list');
+                $('#spots_list_list')
+                     .listview('refresh', true);
+             //   $('#fvw_user_location_button')
+              //      .attr('href', '#spots-list');
             },
             error: function () {
                 popErrorMessage('Lo siento, parece que hay un problema con la conexión a furgovw.org');

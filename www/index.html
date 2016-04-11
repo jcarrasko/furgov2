@@ -31,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="jqm/jquery.mobile-min.css"/>
     
     
-    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/appo.css">
     <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less">
 
     <script type="text/javascript" src="cordova.js"></script>
@@ -86,41 +86,43 @@
 
 <div data-role="page" id="home">
     <div data-role="header" data-position="fixed">
-        <h1>Furgoperfectos v2.0</h1>
-        
-        
-        
+        <h1 id="fvw_location_name">Furgoperfectos v2.0</h1>   
         <div class="widget-container content-area horiz-area wrapping-col right">
             <a class="widget uib_w_3 d-margins" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-mini="true" data-icon="gear" data-iconpos="notext" id="show_prefs"></a>
           </div>
     </div>
 
     <div data-role="content">
-
-        <img id="fvw_logo" src="img/logo_furgovw.png">
-
-        <div>
+        <!--img id="fvw_logo" src="img/logo_furgovw.png"-->
+        <!--div>
             <p id="fvw_user_location_input">Barcelona, Catalunya</p>
-        </div>
+        </div-->
 
-
-
-        <div data-role="controlgroup" class="uib-jqm-flex widget uib_w_4 d-margins"
-             data-uib="jquery_mobile/button_group" data-ver="0" data-type="horizontal" id="buttons">
-
+        <ul id="spots_list_list" data-role="listview"  data-inset="true" data-filter="true">
+        </ul>
+         </div>
+        <div data-role="footer" data-position="fixed" class="container-group inner-element uib_w_11" data-uib="jquery_mobile/footer" data-ver="0">
+         
+        <div class="widget-container wrapping-col single-centered">
+            <div data-role="controlgroup" class="uib-jqm-flex widget uib_w_12 d-margins" data-uib="jquery_mobile/button_group" data-ver="0" data-type="horizontal">
+            
+            <!--    
             <a id="fvw_user_location_button" class="widget uib_w_5" data-uib="jquery_mobile/button" data-ver="0" data-role="button"
                data-icon="location" data-mini="true" data-iconpos="top">Proximas</a>
+            -->
             <a class="widget uib_w_6" data-uib="jquery_mobile/button" data-ver="0" data-role="button" href="#map_page"
                data-icon="navigation" data-iconpos="top" data-mini="true">Mapa</a>
             <a  id="fvw_all_spots_button" class="widget uib_w_7" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-mini="true" href="#search-page"
                data-icon="search" data-iconpos="top">Buscar</a>
-
+                
+                
+            </div>
         </div>
-<!--
-        <a id="fvw_user_location_button" class="widget uib_w_8 d-margins" data-uib="jquery_mobile/button" data-ver="0"
-           href="#" data-role="button" data-icon="bullets" data-iconpos="left" data-mini="true">Veure Llistat</a> -->
-
+        <div class="widget-container content-area horiz-area wrapping-col left"></div>
+        <div class="widget-container content-area horiz-area wrapping-col right"></div>
     </div>
+
+   
 
 
 </div>
@@ -137,7 +139,7 @@
 </div>
 
 
-<!-- Spots List Page -->
+<!-- Spots List Page !not needed
 <div id="spots-list" data-role="page">
     <div data-role="header" data-position="fixed" data-add-back-btn="false">
         <h1 id="fvw_location_name">furgovw.org</h1>
@@ -147,7 +149,7 @@
         <ul id="spots_list_list" data-role="listview"  data-inset="true" data-filter="true">
         </ul>
     </div>
-</div>
+</div>  -->
 
 <div id="spot-detail" data-id="" data-role="page">
     <div data-role="header" data-position="fixed" data-add-back-btn="false">
