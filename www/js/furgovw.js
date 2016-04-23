@@ -1,9 +1,10 @@
-/**
- * Club Camper Furgovw's Mobile App
- * Copyright (C) 2012, Club Camper Furgovw (furgovw.org)
- * Original by Javier Montes (@mooontes - http://mooontes.com)
- * Version 2 by José Carrasco (@jcarrasko )
- */
+/* var console=console;
+var google=google;
+var connection=connection;
+var Connection=connection;
+var navigator=navigator; */
+
+
 var furgovw = {};
 var map;
 
@@ -12,15 +13,15 @@ var map;
 (function ($) {
 
     // Defalts
-    
-    var defaultLocation="Barcelona";
-    
-    
+
+    var defaultLocation = "Barcelona"; // borrar move 2 geoservice
+
+
     // Variables
     furgovw.markers = [];
     furgovw.isOnline = false;
     furgovw.isGeoPositionated = false;
-    furgovw.spots =[];
+    furgovw.spots = [];
 
     /*
      * Icons
@@ -34,7 +35,7 @@ var map;
         'img/icons/building-location.png',
         'img/icons/unknown-pin.png'
     ];
-    
+
     /*
      * Big Icons
      */
@@ -63,10 +64,10 @@ var map;
 
 
     furgovw.deviceready = function () {
- 
+
         console.log('Initializing Device...');
 
-         
+
         // Canviar per un update reload...
         $('#fvw_logo')
             .on('click', function () {
@@ -84,347 +85,196 @@ var map;
             furgovw.userLatitude = furgovw.marker.position.lat();
             furgovw.userLongitude = furgovw.marker.position.lng();
 
-           // furgovw.loadSpots(); <-- Not needed
 
-            //     $('a#fvw_user_location_button')<a id="fvw_select_location_button" href="#map_page" data-role="button" data-icon="search" data-iconpos="notext">.attr('href', '#spots-list');
+            //Get user location
+            console.log('Starting to get location...');
+            geoService.getAddress(furgovw.marker.position.lat(), furgovw.marker.position.lng(), furgovw.setLocation);
 
-            furgovw.geocoder.geocode({
-                'latLng': furgovw.marker.position
-            }, function (results, status) {
-
-                furgovw.setAdress(results, status);
-
-            });
+    
         });
 
 
 
-        furgovw.geocoder = new google.maps.Geocoder();
+        //  furgovw.geocoder = new google.maps.Geocoder(); // borrar moved 2 rsulset.
         furgovw.main();
 
 
     };
 
+    
     /*
-    Setadress
+    * Callback function used to set current address
     */
 
-    furgovw.setAdress = function (results, status) {
+    furgovw.setLocation = function (currentLocation) {
 
-        console.log("Status: " + status);
-        console.log("results", results);
+        console.log(currentLocation);
+        
+        furgovw.currentLocation=currentLocation;
+        furgovw.userLatitude = currentLocation.latitude;
+        furgovw.userLongitude = currentLocation.longitude;
 
-        if (status == google.maps.GeocoderStatus.OK) {
-            console.log('Ok geocoder');
-            if (results[0]) {  // <---- 0 or 1 ?? 
-                var reverse_geo = results[0];
-                console.log('Extracting data');
-                console.log(results);
-                var my_place = reverse_geo.address_components[1].long_name + ', ' + reverse_geo.address_components[2].long_name;
-                console.log("Place is " + my_place);
-                $('#fvw_user_location_input').text(my_place);
-                $('#fvw_location_name').html(my_place);
+        furgovw.latLng = {
+            lat: parseFloat(furgovw.userLatitude),
+            lng: parseFloat(furgovw.userLongitude)
+        };
 
-            }
-        } else {
-            console.log('Status');
-        }
+
+        var my_place = currentLocation.locality + ', ' + currentLocation.area;
+
+        $('#fvw_user_location_input').text(my_place);
+        $('#fvw_location_name').html(my_place);
+
+        furgovw.loadSpots();
+        furgovw.loadAllSpots();
+        $('a#fvw_all_spots_button')
+            .attr('href', '#search-page');
+
+        // map.setCenter(initialLocation);
 
     };
-
-
 
 
     furgovw.main = function () {
 
-     /*   var networkState = navigator.connection.type;
+        /*   var networkState = navigator.connection.type;
 
-        var states = {};
-        states[Connection.UNKNOWN] = 'Unknown connection';
-        states[Connection.ETHERNET] = 'Ethernet connection';
-        states[Connection.WIFI] = 'WiFi connection';
-        states[Connection.CELL_2G] = 'Cell 2G connection';
-        states[Connection.CELL_3G] = 'Cell 3G connection';
-        states[Connection.CELL_4G] = 'Cell 4G connection';
-        states[Connection.CELL] = 'Cell generic connection';
-        states[Connection.NONE] = 'No network connection';
+           var states = {};
+           states[Connection.UNKNOWN] = 'Unknown connection';
+           states[Connection.ETHERNET] = 'Ethernet connection';
+           states[Connection.WIFI] = 'WiFi connection';
+           states[Connection.CELL_2G] = 'Cell 2G connection';
+           states[Connection.CELL_3G] = 'Cell 3G connection';
+           states[Connection.CELL_4G] = 'Cell 4G connection';
+           states[Connection.CELL] = 'Cell generic connection';
+           states[Connection.NONE] = 'No network connection';
 
-        // alert('Connection type: ' + states[networkState]);*/
+           // alert('Connection type: ' + states[networkState]);*/
 
         console.log("Connection: " + navigator.connection.type);
-        console.log("connection none is "+ Connection.NONE);
-        
-           
- 
+        console.log("connection none is " + Connection.NONE);
+
+
         //If there's no internet connection
         if (navigator.connection.type == Connection.NONE) {
-          // popErrorMessage('Lo siento, esta aplicación necesita que tengas conexión a internet');
+            // popErrorMessage('Lo siento, esta aplicación necesita que tengas conexión a internet');
             furgovw.isOnline = false;
-        } 
+        }
 
         //Get user location
         console.log('Starting to get location...');
+        geoService.getCurrentLocation(furgovw.setLocation);
 
-        // Try W3C Geolocation (Preferred)
-        if (navigator.geolocation) {
-
-            browserSupportFlag = true;
-            navigator.geolocation.getCurrentPosition(function (position) {
-                initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
-                furgovw.userLatitude = position.coords.latitude;
-                furgovw.userLongitude = position.coords.longitude;
-
-
-
-                console.log('LAT' + furgovw.userLatitude);
-                console.log('Long' + furgovw.userLongitude);
-
-                furgovw.latLng = {
-                    lat: parseFloat(furgovw.userLatitude),
-                    lng: parseFloat(furgovw.userLongitude)
-                };
-
-
-              
-                if (furgovw.geocoder) {
-
-                    furgovw.geocoder.geocode({
-                        'location': furgovw.latLng
-                    }, function (results, status) {
-                        furgovw.setAdress(results, status);
-
-                    });
-                }
-
-                 
-                furgovw.loadSpots();
-                
-                // updating database
-                
-                furgovw.updateDatabase;
-                
-                
-             //   $('a#fvw_user_location_button')
-             //       .attr('href', '#spots-list');
-                
-                furgovw.loadAllSpots();
-                $('a#fvw_all_spots_button')
-                    .attr('href', '#search-page');
-                  
-               // map.setCenter(initialLocation);
-                    
-            }, function () {
-                handleNoGeolocation(browserSupportFlag);
-            });
-
-            // Browser doesn't support Geolocation
-        } else {
-            console.log('ko location');
-            browserSupportFlag = false;
-            popErrorMessage('Lo siento, no consigo encontrar tu localización');
-            initialLocation = barcelona;
-            map.setCenter(initialLocation);
-
-        }
-        
-         
+ 
+  
     };
 
 
-    function handleNoGeolocation(errorFlag) {
-        if (errorFlag === true) {
-            alert("Geolocation service failed.");
-            initialLocation = newyork;
-        } else {
-            alert("Your browser doesn't support geolocation. We've placed you in Siberia.");
-            initialLocation = siberia;
-        }
-        map.setCenter(initialLocation);
-    }
-
-
-    
-    /* function
+    /*  
     / Gets the datasource depending if is online / offline
     */
-    furgovw.getDataSource = function(){
-        
-        dataSource=furgovw.options.offlineUrl;
-        if (furgovw.isOnline === true){
+    furgovw.getDataSource = function () {
+
+        dataSource = furgovw.options.offlineUrl;
+        if (furgovw.isOnline === true) {
             dataSource = furgovw.options.apiUrl +
-            '?latitude=' + encodeURIComponent(furgovw.userLatitude) +
-            '&longitude=' + encodeURIComponent(furgovw.userLongitude);
+                '?latitude=' + encodeURIComponent(furgovw.userLatitude) +
+                '&longitude=' + encodeURIComponent(furgovw.userLongitude);
         }
-        
+
         return dataSource;
     };
-    
-    // Updates all the info from the source
-    // Put all this information in the DB
-    // Later, we'll query when we need
-    
-    
-    furgovw.updateDatabase = function () {
-        
-        
-        mapApiUrl =furgovw.getDataSource();
-        console.log("Loading all spots from Datasource:"+mapApiUrl);
-        
-        // Open Database
-        var db = openDatabase('furgodb', '1.0', 'my db', 2*1024*1024);
 
-        
+
+
+    furgovw.updateDatabase = function () {
+
+        console.log("UPDATING DB !!!!!");
+
+        mapApiUrl = furgovw.getDataSource();
+        console.log("Loading all spots from Datasource:" + mapApiUrl);
+
+        // Open Database
+        var db = openDatabase('furgodb', '1.0', 'my db', 5 * 1024 * 1024);
+
+
         // Creates the Database if no Exist
-        
-        db.transaction(function(tx) {
-        
+
+        db.transaction(function (tx) {
+
             tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real,html text,htmlp text,link text,image text,author text,width integer,lenght integer,destomtom text,id_member text, date text,topic_id integer)");
-        
-           }, function(err){
+
+        }, function (err) {
 
             //errors Creating DB
-            console.log("FPv2. Error creating the DB");
-            console.log("FPv2. Error: " + err.message);
+            console.log("FPv2. Error creating the DB.");
+            console.log("FPv2. Error Description: " + err.message);
 
         });
-        
+
         // Querying the source
 
         $.ajaxSetup({
             scriptCharset: "utf-8",
             contentType: "application/json; charset=utf-8"
         });
-        
-        
+
+
         $.getJSON(mapApiUrl, function (spots) {
-            
-            
+
+
             // Fills the DB
-            db.transaction(function(tx) {
+            db.transaction(function (tx) {
 
                 // Update the spots array
                 furgovw.spots = spots; // <- not needed ?
-             
+
                 $.each(spots, function (index, spot) {
 
                     // calculate the distance
-                    spot.distance = furgovw.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.lng, spot.lat);
-                    
-                    
-                   /* $('#all_spots_list')
-                        .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '<img class="spots_list_picture" src="http://www.furgovw.org/tt.php?src=' + encodeURIComponent(spot.imagen) + '&w=80&h=80"></a></li>'); 
-                        
-                        
-                        $('#all_spots_list')
-                        .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '"><img class="spots_list_picture" src="' +  furgovw.bigIcons[spot.icono] + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '</p>'+spot.destomtom+'</p></a></li>'); 
-                        
-                    */
-                    
-                    console.log("inserting1");
-                    tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude,destomtom) VALUES ("+spot.id+","+spot.icono+",'"+spot.nombre+"',"+spot.lat+","+spot.lng+",'"+spot.destomtom+"')");
-                    
-                   
-                    
-                   
-                    
-                    
+                    spot.distance = geoService.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.lng, spot.lat);
+                    var sentenceQuery = "no sentence";
+
+
+                    /* $('#all_spots_list')
+                         .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '<img class="spots_list_picture" src="http://www.furgovw.org/tt.php?src=' + encodeURIComponent(spot.imagen) + '&w=80&h=80"></a></li>'); 
+                         
+                         
+                         $('#all_spots_list')
+                         .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '"><img class="spots_list_picture" src="' +  furgovw.bigIcons[spot.icono] + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '</p>'+spot.destomtom+'</p></a></li>'); 
+                         
+                     */
+
+                    console.log("Inserting data..");
+                    /*console.log( "INSERT INTO SPOTS (id,type, name, latitude, longitude,destomtom) VALUES (" + spot.id + "," + spot.icono + ",'" + spot.nombre    + "'," + spot.lat + "," + spot.lng + ",'" + spot.destomtom + "')");*/
+                    tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude,destomtom) VALUES (?,?,?,?,?,?)", [spot.id, spot.icono, spot.nombre, spot.lat, spot.lng, spot.destomtom]);
+
+
                 });
 
-               
-                
-                
-                
-                
-                }, function(err){
+
+            }, function (myErr) {
 
                 //errors for all transactions are reported here
-                 console.log("Error: " + err.message);
-
-                });
-                
-         
-            /* ,
-                        error: function() {
-                            popErrorMessage('Lo siento, parece que hay un problema con la conexión a furgovw.org');
-                            return;
-                              
-                    }*/
-        });
-        
-        
- /*   var db = openDatabase('mydatabase', '1.0', 'my db', 2*1024*1024);
-        //db.openDatabase({name: "demo.db",
-        //iosDatabaseLocation: "default"});
-
-    db.transaction(function(tx) {
-
-       
-
-           
-
-           
-         db.transaction(function(tx) {
-            tx.executeSql('SELECT * FROM SPOTS ',[], function (tx, results) {
-             if(results.rows.length > 0) {
-                for(var i = 0; i < results.rows.length; i++) {
-                    console.log("Result -> " + results.rows.item(i).name + " " + results.rows.item(i).id);
-                }
-            }
-            });*/
-        
-        
-     
-        
-
-        
-        
-        /*  console.log("create table");
-        tx.executeSql("CREATE TABLE IF NOT EXISTS demo (id integer primary key, data text, data_num integer)", [], function(tx, res){
-
-            console.log("insert data");
-            tx.executeSql("INSERT INTO demo (id, data, data_num) VALUES (?,?,?)", [1, "test", 100], function(tx,res){
-
-                console.log("retrieve data");
-                tx.executeSql("SELECT * FROM demo WHERE id = ?", [1], function(tx, res){
-                    for(var iii = 0; iii < res.rows.length; iii++)
-                    {
-                        console.log("retrieve data in");
-                        console.log(res.rows.item(iii).id);
-                        console.log(res.rows.item(iii).data);
-                        console.log(res.rows.item(iii).data_num);
-                    }
-                });
+                console.log("Error populating DB");
+                console.log("Error: " + myErr.message);
 
             });
 
         });
 
-    }, function(err){
-
-        //errors for all transactions are reported here
-        console.log("Error: " + err.message);
-
-    });*/
-        
-        
-        
-        
     };
-    
-    
-    
-    
-    
-    
-    /* function
+
+
+
+    /* 
     / Load all spots from datasource
     */
-    
+
     furgovw.loadAllSpots = function () {
 
-        mapApiUrl =furgovw.getDataSource();
-        console.log("Loading all spots from Datasource:"+mapApiUrl);
+        mapApiUrl = furgovw.getDataSource();
+        console.log("Loading all spots from Datasource:" + mapApiUrl);
 
         $('#all_spots_list')
             .empty();
@@ -434,28 +284,33 @@ var map;
             contentType: "application/json; charset=utf-8"
         });
 
-    
+
         $.getJSON(mapApiUrl, function (spots) {
 
+
+                /*   spotService.initService();
+                   spotService.updateDatabase(spots);
+                   spotService.loadSpotsFromDatabase();*/
+
                 furgovw.spots = spots;
-             
+
                 $.each(spots, function (index, spot) {
 
                     // calculate the distance
-                    spot.distance = furgovw.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.lng, spot.lat);
-                    
-                    
-                   /* $('#all_spots_list')
-                        .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '<img class="spots_list_picture" src="http://www.furgovw.org/tt.php?src=' + encodeURIComponent(spot.imagen) + '&w=80&h=80"></a></li>'); */
-                    
+                   spot.distance = geoService.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.lng, spot.lat);
+
+
+                    /* $('#all_spots_list')
+                         .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '<img class="spots_list_picture" src="http://www.furgovw.org/tt.php?src=' + encodeURIComponent(spot.imagen) + '&w=80&h=80"></a></li>'); */
+
                     $('#all_spots_list')
-                        .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '"><img class="spots_list_picture" src="data/thumbs/' +  spot.id + '.jpg">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '</p>'+spot.destomtom+'</p></a></li>');
-                    
-                    
+                        .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '"><img class="spots_list_picture" src="data/thumbs/' + spot.id + '.jpg">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '</p>' + spot.destomtom + '</p></a></li>');
+
+
                 });
 
                 //$('#all_spots_list')
-               //     .listview('refresh', true);
+                //     .listview('refresh', true);
                 $('#fvw_all_spots_button')
                     .attr('href', '#search-page');
             }
@@ -467,6 +322,11 @@ var map;
                     }*/
         );
     };
+
+
+
+
+
 
     furgovw.loadSpots = function () {
 
@@ -480,7 +340,7 @@ var map;
         });
 
         mapApiUrl =
-             this.options.apiUrl +
+            this.options.apiUrl +
             '?latitude=' + encodeURIComponent(furgovw.userLatitude) +
             '&longitude=' + encodeURIComponent(furgovw.userLongitude);
         console.log(mapApiUrl);
@@ -491,7 +351,7 @@ var map;
             success: function (spots) {
                 console.log('furgovw: Loaded data from api');
                 //furgovw.spots = spots;
-                
+
 
 
                 $.each(spots, function (index, spot) {
@@ -501,9 +361,9 @@ var map;
                 });
 
                 $('#spots_list_list')
-                     .listview('refresh', true);
-             //   $('#fvw_user_location_button')
-              //      .attr('href', '#spots-list');
+                    .listview('refresh', true);
+                //   $('#fvw_user_location_button')
+                //      .attr('href', '#spots-list');
             },
             error: function () {
                 popErrorMessage('Lo siento, parece que hay un problema con la conexión a furgovw.org');
@@ -547,7 +407,7 @@ var map;
 
                 $('p#fvw_spot_msg_body')
                     //.html(furgovw.removeBadTags(spot.body));
-                .html(furgovw.removeBadTags(spot.destomtom));
+                    .html(furgovw.removeBadTags(spot.destomtom));
             }
         });
     };
@@ -561,10 +421,10 @@ var map;
 
         if (typeof furgovw.marker == 'undefined') {
             if (furgovw.userLatitude && furgovw.userLongitude) {
-                var latlng =
+                latlng =
                     new google.maps.LatLng(furgovw.userLatitude, furgovw.userLongitude);
             } else {
-                var latlng =
+                latlng =
                     new google.maps.LatLng("40.41153868", "-3.70362707");
             }
 
@@ -764,7 +624,7 @@ var map;
      * @param lat2 = Latitud del punto de destino
      * @param lon1 = Longitud del punto de origen
      * @param lon2 = Longitud del punto de destino
-     */
+    
     furgovw.getRelativeDistance = function (lat1, lon1, lat2, lon2) {
         rad = function (x) {
             return x * Math.PI / 180;
@@ -779,7 +639,7 @@ var map;
         var d = R * c;
 
         return d.toFixed(1); //Retorna tres decimales
-    };
+    }; */
 
 
 
