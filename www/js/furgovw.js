@@ -12,9 +12,6 @@ var map;
 
 (function ($) {
 
-    // Defalts
-
-    var defaultLocation = "Barcelona"; // borrar move 2 geoservice
 
 
     // Variables
@@ -90,7 +87,7 @@ var map;
             console.log('Starting to get location...');
             geoService.getAddress(furgovw.marker.position.lat(), furgovw.marker.position.lng(), furgovw.setLocation);
 
-    
+
         });
 
 
@@ -101,16 +98,16 @@ var map;
 
     };
 
-    
+
     /*
-    * Callback function used to set current address
-    */
+     * Callback function used to set current address
+     */
 
     furgovw.setLocation = function (currentLocation) {
 
         console.log(currentLocation);
-        
-        furgovw.currentLocation=currentLocation;
+
+        furgovw.currentLocation = currentLocation;
         furgovw.userLatitude = currentLocation.latitude;
         furgovw.userLongitude = currentLocation.longitude;
 
@@ -165,8 +162,8 @@ var map;
         console.log('Starting to get location...');
         geoService.getCurrentLocation(furgovw.setLocation);
 
- 
-  
+
+
     };
 
 
@@ -297,7 +294,7 @@ var map;
                 $.each(spots, function (index, spot) {
 
                     // calculate the distance
-                   spot.distance = geoService.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.lng, spot.lat);
+                    spot.distance = geoService.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.lng, spot.lat);
 
 
                     /* $('#all_spots_list')
@@ -406,8 +403,8 @@ var map;
                     .html('Autor: <strong>' + spot.autor + '</strong>');
 
                 $('p#fvw_spot_msg_body')
-                    //.html(furgovw.removeBadTags(spot.body));
-                    .html(furgovw.removeBadTags(spot.destomtom));
+                    .html(furgovw.removeBadTags(spot.body));
+                   // .html(furgovw.removeBadTags(spot.destomtom));
             }
         });
     };
@@ -592,7 +589,7 @@ var map;
     };
 
     /*
-     * Load spots from furgovw API
+     * open popup
      */
 
 
@@ -614,34 +611,7 @@ var map;
                     .remove();
             });
 
-    }
-
-
-    /**
-     * Función para calcular la distancia entre dos puntos.
-     *
-     * @param lat1 = Latitud del punto de origen
-     * @param lat2 = Latitud del punto de destino
-     * @param lon1 = Longitud del punto de origen
-     * @param lon2 = Longitud del punto de destino
-    
-    furgovw.getRelativeDistance = function (lat1, lon1, lat2, lon2) {
-        rad = function (x) {
-            return x * Math.PI / 180;
-        };
-
-        var R = 6378.137; //Radio de la tierra en km
-        var dLat = rad(lat2 - lat1);
-        var dLong = rad(lon2 - lon1);
-
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c;
-
-        return d.toFixed(1); //Retorna tres decimales
-    }; */
-
-
+    };
 
 
 

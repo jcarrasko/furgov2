@@ -1,5 +1,5 @@
 /**
- * FurgoPerfectos v2
+ * FurgoPerfectos Offline v2
  * Created by Jose Carrasco (@jcarrasko)
  */
 

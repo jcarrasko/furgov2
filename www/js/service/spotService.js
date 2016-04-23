@@ -1,8 +1,7 @@
 /**
- * FurgoPerfectos v2
+ * FurgoPerfectos Offline v2
  * Created by Jose Carrasco (@jcarrasko)
  */
-
 
 var spotService = {};
 
@@ -24,7 +23,7 @@ spotService.initService = function () {
 spotService.openDatabase = function () {
 
     // Open Database
-    var db = openDatabase('furgodb', '1.0', 'my db', 5 * 1024 * 1024);
+    var db = openDatabase('furgodb', '1.0', 'furgodb', 5 * 1024 * 1024);
     return db;
 
 };
