@@ -139,7 +139,7 @@ geoService.getCurrentLocation = function (callback) {
 
 
 /**
- * Función para calcular la distancia entre dos puntos.
+ * Checks the distance between two locations
  *
  * @param lat1 = Latitud del punto de origen
  * @param lat2 = Latitud del punto de destino

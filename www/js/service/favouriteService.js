@@ -3,6 +3,8 @@
  * Created by Jose Carrasco (@jcarrasko)
  */
 
+NO USE IT. USE only ONE database. Less Space.
+
 var favouriteService = {};
 
 favouriteService.db={};

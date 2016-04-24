@@ -8,6 +8,21 @@ var spotService = {};
 spotService.db={};
 spotService.spots={};
 
+
+// type of spots
+
+ spotService.spotType = [
+        'furgoperfecto',
+        'area AC',
+        'via verde',
+        'otros',
+        'camping',
+        'centro comercial',
+        'otros'
+    ];
+ 
+
+
 /*
  *Create the database
  */

@@ -263,13 +263,22 @@ var map;
     };
 
 
+    /*
+     * Load spots from furgovw API
+     */
+    furgovw.removeBadTags = function (data) {
+        console.log(data.split(''));
+        data = data.replace(/\[/g, '<');
+        data = data.replace(/\]/g, '>');
+        return (data);
+    };
 
     /* 
     / Load all spots from datasource
     */
 
     furgovw.loadAllSpots = function () {
-
+       
         mapApiUrl = furgovw.getDataSource();
         console.log("Loading all spots from Datasource:" + mapApiUrl);
 
@@ -575,24 +584,10 @@ var map;
     };
 
 
-    /*
-     * Load spots from furgovw API
-     */
-    furgovw.removeBadTags = function (data) {
-        console.log(data.split(''));
-
-        data = data.replace(/\[/g, '<');
-        data = data.replace(/\]/g, '>');
-
-        return (data);
-
-    };
 
     /*
      * open popup
      */
-
-
     function popErrorMessage(errorMessage) {
 
         $("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all error-message'><h1>" + errorMessage + "</h1></div>")

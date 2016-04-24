@@ -43,16 +43,34 @@
             min-zoom: 100%;
         }
         /*@-ms-viewport { user-zoom: zoom ; min-zoom: 100% ; max-zoom: 200% ; }   @viewport { user-zoom: zoom ; min-zoom: 100% ; max-zoom: 200% ; }*/
+        
+         
     </style>
 
 
 
 
     <link rel="stylesheet" type="text/css" href="jqm/jquery.mobile-min.css" />
-
-
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less">
+    
+    <!--restyling  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
+    <link rel="stylesheet" href="http://nd2.godesign.ch/vendor/waves/waves.min.css">
+    <link rel="stylesheet" href="http://nd2.godesign.ch/css/nativedroid2.css">
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+    <script src="http://nd2.godesign.ch/vendor/waves/waves.min.js"></script>
+    <script src="http://nd2.godesign.ch/vendor/wow/wow.min.js"></script>
+    <script src="http://nd2.godesign.ch/js/nativedroid2.js"></script>
+    <script src="http://nd2.godesign.ch/nd2settings.js"></script>
+
+    <!-end restyling-->
+
+    
 
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
@@ -118,8 +136,8 @@
         <div data-role="content">
             <!--img id="fvw_logo" src="img/logo_furgovw.png"-->
             <div>
-            <p id="fvw_user_location_input">Barcelona, Catalunya</p>
-        </div>
+                <p id="fvw_user_location_input">Barcelona, Catalunya</p>
+            </div>
 
             <ul id="spots_list_list" data-role="listview" data-inset="true" data-filter="true">
             </ul>
@@ -156,7 +174,7 @@
     </div>
 
 
-    <!-- Spots List Page !not needed
+    <!-- Spots List Page !not needed -->
 <div id="spots-list" data-role="page">
     <div data-role="header" data-position="fixed" data-add-back-btn="false">
         <h1 id="fvw_location_name">furgovw.org</h1>
@@ -166,7 +184,7 @@
         <ul id="spots_list_list" data-role="listview"  data-inset="true" data-filter="true">
         </ul>
     </div>
-</div>  -->
+</div> 
 
     <div id="spot-detail" data-id="" data-role="page">
 
@@ -227,8 +245,50 @@
         </div>
 
         <div data-role="content">
-            <ul id="all_spots_list" data-role="listview" data-inset="true" data-filter="true">
-            </ul>
+            
+        <form id="search_form" action="#spots-list">
+          <div class="table-thing with-label widget uib_w_9 d-margins" data-uib="jquery_mobile/select" data-ver="0">
+            <label class="narrow-control label-top-left">Tipo</label>
+            <div data-role="fieldgroup" class+ "wide-control"="">
+              <select data-mini="true" name="type" id="type">
+                <option value="0">Furgoperfecto</option>
+                <option value="1">Area AC</option>
+                <option value="2">Via Verde</option>
+                <option value="4">Camping</option>
+                <option value="5">Centro Comercial</option>
+                <option value="3">Otros 3</option>
+                <option value="6">Otros 6</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-thing with-label widget uib_w_6 d-margins" data-uib="jquery_mobile/select" data-ver="0">
+            <label class="narrow-control label-top-left">Estado</label>
+            <div data-role="fieldgroup" class+ "wide-control"="">
+              <select data-mini="true" name="country" id="country">
+                <option>Catalunya</option>
+                <option>España</option>
+                <option>bla</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-thing with-label widget uib_w_8 d-margins" data-uib="jquery_mobile/select" data-ver="0">
+            <label class="narrow-control label-top-left">Area</label>
+            <div data-role="fieldgroup" class+ "wide-control"="">
+              <select name="area" id="area">
+                <option>Catalunya</option>
+                <option>Bla</option>
+              </select>
+            </div>
+          </div>
+            <input type="submit">Buscar</input>
+            
+            <a class="widget uib_w_7 d-margins" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-icon="search" data-mini="true" onclick="alert:('hola');">Buscar</a>
+      
+            </form>
+            
+            
+            <!--ul id="all_spots_list" data-role="listview" data-inset="true" data-filter="true">
+            </ul-->
         </div>
     </div>
 
