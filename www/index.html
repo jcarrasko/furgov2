@@ -127,7 +127,7 @@
 
     <div data-role="page" id="home">
         <div data-role="header" data-position="fixed">
-            <h1 id="fvw_location_name">Furgoperfectos v2.0</h1>
+            <h1 id="fvw_location_name">Furgoperfectos v2.0 Home</h1>
             <div class="widget-container content-area horiz-area wrapping-col right">
                 <a class="widget uib_w_3 d-margins" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-mini="true" data-icon="gear" data-iconpos="notext" id="show_prefs"></a>
             </div>
@@ -174,7 +174,7 @@
     </div>
 
 
-    <!-- Spots List Page !not needed -->
+    <!-- Spots List Page !not needed 
 <div id="spots-list" data-role="page">
     <div data-role="header" data-position="fixed" data-add-back-btn="false">
         <h1 id="fvw_location_name">furgovw.org</h1>
@@ -184,7 +184,7 @@
         <ul id="spots_list_list" data-role="listview"  data-inset="true" data-filter="true">
         </ul>
     </div>
-</div> 
+</div> -->
 
     <div id="spot-detail" data-id="" data-role="page">
 
@@ -246,10 +246,10 @@
 
         <div data-role="content">
             
-        <form id="search_form" action="#spots-list">
+        <form id="search_form" action="#home">
           <div class="table-thing with-label widget uib_w_9 d-margins" data-uib="jquery_mobile/select" data-ver="0">
             <label class="narrow-control label-top-left">Tipo</label>
-            <div data-role="fieldgroup" class+ "wide-control"="">
+            <div data-role="fieldgroup" class= "wide-control"="">
               <select data-mini="true" name="type" id="type">
                 <option value="0">Furgoperfecto</option>
                 <option value="1">Area AC</option>
@@ -263,7 +263,7 @@
           </div>
           <div class="table-thing with-label widget uib_w_6 d-margins" data-uib="jquery_mobile/select" data-ver="0">
             <label class="narrow-control label-top-left">Estado</label>
-            <div data-role="fieldgroup" class+ "wide-control"="">
+            <div data-role="fieldgroup" class= "wide-control"="">
               <select data-mini="true" name="country" id="country">
                 <option>Catalunya</option>
                 <option>España</option>
@@ -273,16 +273,16 @@
           </div>
           <div class="table-thing with-label widget uib_w_8 d-margins" data-uib="jquery_mobile/select" data-ver="0">
             <label class="narrow-control label-top-left">Area</label>
-            <div data-role="fieldgroup" class+ "wide-control"="">
+            <div data-role="fieldgroup" class= "wide-control"="">
               <select name="area" id="area">
                 <option>Catalunya</option>
                 <option>Bla</option>
               </select>
             </div>
           </div>
-            <input type="submit">Buscar</input>
+            <input type="submit" value="Buscar" data-icon="search" data-mini="true" onclick="alert:('hola');"/>
             
-            <a class="widget uib_w_7 d-margins" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-icon="search" data-mini="true" onclick="alert:('hola');">Buscar</a>
+           
       
             </form>
             

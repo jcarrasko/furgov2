@@ -5,13 +5,13 @@
 
 var spotService = {};
 
-spotService.db={};
-spotService.spots={};
+spotService.db = {};
+spotService.spots = {};
 
 
 // type of spots
 
- spotService.spotType = [
+spotService.spotType = [
         'furgoperfecto',
         'area AC',
         'via verde',
@@ -20,7 +20,7 @@ spotService.spots={};
         'centro comercial',
         'otros'
     ];
- 
+
 
 
 /*
@@ -54,7 +54,7 @@ spotService.createDatabase = function () {
         tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real,html text,htmlp text,link text,image text,author text,width integer,lenght integer,destomtom text,id_member text, date text,topic_id integer)");
 
     }, function (err) {
-        console.log("Error Creating the database" + err.message);
+        console.log("spotService.Error Creating the database" + err.message);
     });
 
 };
@@ -78,7 +78,7 @@ spotService.updateDatabase = function (spotList) {
         }
 
     }, function (err) {
-        console.log("Error updating the database: " + err.message);
+        console.log("spotService.Error updating the database: " + err.message);
     });
 
 };
@@ -87,20 +87,34 @@ spotService.updateDatabase = function (spotList) {
  * Retrieve the spots from database
  */
 
-spotService.loadSpotsFromDatabase = function () {
+spotService.loadSpotsFromDatabase = function (callback) {
 
+    var spots=[];
     spotService.db.transaction(function (tx) {
         tx.executeSql('SELECT * FROM SPOTS ', [], function (tx, results) {
             if (results.rows.length > 0) {
                 for (var i = 0; i < results.rows.length; i++) {
-                    console.log("Loading DB: Result -> " + results.rows.item(i).name + " " + results.rows.item(i).id);
-                    console.log(results.rows.item(i));
+                    spots.push(results.rows.item(i));
                 }
             }
+        
         });
-
+        callback(spots);
 
     }, function (err) {
-        console.log("Error loading the database: " + err.message);
+        console.log("spotService.Error loading the database: " + err.message);
     });
+    console.log("the spots");
+    console.log(spots);
+
+};
+
+/*
+ * Remove bad tats
+ */
+spotService.removeBadTags = function (data) {
+    console.log(data.split(''));
+    data = data.replace(/\[/g, '<');
+    data = data.replace(/\]/g, '>');
+    return (data);
 };
