@@ -61,15 +61,18 @@ var map;
 
 
     furgovw.deviceready = function () {
-
+        
+        console.log('FurgoVW.Initializing Device...');
         // initialize services
         spotService.initService();
-        console.log('Initializing Device...');
 
-
+        console.log('FurgoVW.Updating DB');
+        //TODO remove from here
+        furgovw.updateDatabase(); // just for test
 
         // Load the spots
-        furgovw.spots = spotService.loadSpotsFromDatabase(furgovw.loadAllSpots());
+        console.log('FurgoVW.Loding DB...');
+        spotService.loadSpotsFromDatabase(furgovw.loadAllSpots);
 
         console.log("furgo spots");
         console.log(furgovw.spots);
@@ -79,7 +82,14 @@ var map;
             .on('click', function () {
                 furgovw.main();
             });
+        
+        
 
+        
+        $('#show_prefs')
+            .on('click', function () {
+                furgovw.updateDatabase();
+            });
         // Loads the map
 
         $('#map_page').on('pageshow', function () {
@@ -214,7 +224,7 @@ var map;
 
         $.getJSON(mapApiUrl, function (spots) {
 
-            spotService.updateDatabase(spots);
+            spotService.updateDatabase(spots,spotService.loadSpotsFromDatabase(furgovw.loadAllSpots));
 
 
             /* normalize the spots
@@ -226,6 +236,8 @@ var map;
 
 
             }); */
+            
+            
 
 
         }, function (error) {
@@ -235,6 +247,9 @@ var map;
             console.log("Error: " + error.message);
 
         });
+        
+        
+
 
     };
 
@@ -263,14 +278,10 @@ var map;
 
         furgovw.spots = spots;
 
-        if (typeof spots === "undefined") {
-            console.log("nothing in the spots list. Starting to populate db");
-            furgovw.updateDatabase();
-            // Load the spots
-            furgovw.spots = spotService.loadSpotsFromDatabase(furgovw.loadAllSpots());
-
+        if ( spots.length===0) {
+            console.log("nothing in the spots list.");
+            console.log(spots);
             return;
-
         }
 
         $.each(spots, function (index, spot) {
@@ -287,6 +298,8 @@ var map;
 
 
         });
+        
+ 
 
         //$('#all_spots_list')
         //     .listview('refresh', true);
@@ -380,7 +393,7 @@ var map;
                 console.log('furgovw: Loaded data from api');
                 //furgovw.spots = spots;
 
-                spots = spotService.loadSpotsFromDatabase();
+                //spots = spotService.loadSpotsFromDatabase();
 
                 $.each(spots, function (index, spot) {
                     $('#spots_list_list')

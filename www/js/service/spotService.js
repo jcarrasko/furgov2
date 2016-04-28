@@ -48,10 +48,16 @@ spotService.openDatabase = function () {
  */
 spotService.createDatabase = function () {
 
+    //remove from here, must go update
+    spotService.db.transaction(function (tx) {
+        tx.executeSql('DROP TABLE SPOTS');
+    });
+
     // Creates the Database if no Exist
     spotService.db.transaction(function (tx) {
 
-        tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real,html text,htmlp text,link text,image text,author text,width integer,lenght integer,destomtom text,id_member text, date text,topic_id integer)");
+
+        tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real,html text,htmlp text,link text,image text,author text,width integer,lenght integer,description text,id_member text, date text,topic_id integer, favourite integer)");
 
     }, function (err) {
         console.log("spotService.Error Creating the database" + err.message);
@@ -64,18 +70,20 @@ spotService.createDatabase = function () {
  * Updates the database with the list of spots if is needed
  */
 
-spotService.updateDatabase = function (spotList) {
+spotService.updateDatabase = function (spotList,callback) {
 
     spotService.db.transaction(function (tx) {
 
         var i;
         for (i in spotList) {
             var spot = spotList[i];
-            /*console.log("Inserting data..");
-            console.log( "INSERT INTO SPOTS (id,type, name, latitude, longitude,destomtom) VALUES (" + spot.id + "," + spot.icono + ",'" + spot.nombre    + "'," + spot.lat + "," + spot.lng + ",'" + spot.destomtom + "')");*/
+            //console.log("Inserting data..");
+            //console.log( "INSERT INTO SPOTS (id,type, name, latitude, longitude,destomtom) VALUES (" + spot.id + "," + spot.icono + ",'" + spot.nombre    + "'," + spot.lat + "," + spot.lng + ",'" + spot.destomtom + "')");
             tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude, description) VALUES (?,?,?,?,?,?)", [spot.id, spot.icono, spot.nombre, spot.lat, spot.lng, spot.destomtom]);
 
         }
+        
+        spotService.loadSpotsFromDatabase(callback);
 
     }, function (err) {
         console.log("spotService.Error updating the database: " + err.message);
@@ -94,18 +102,22 @@ spotService.loadSpotsFromDatabase = function (callback) {
         tx.executeSql('SELECT * FROM SPOTS ', [], function (tx, results) {
             if (results.rows.length > 0) {
                 for (var i = 0; i < results.rows.length; i++) {
-                    spots.push(results.rows.item(i));
+                    console.log(results.rows.item(i));
+                    id=results.rows.item(i)[id];
+                    spots[id]=results.rows.item(i);
                 }
             }
-        
+
         });
-        callback(spots);
+    console.log("spotService.The spots returned from loadSpotsFromDatabase:");
+    console.log(spots);
+    // callback to the main function
+    callback(spots);
 
     }, function (err) {
         console.log("spotService.Error loading the database: " + err.message);
     });
-    console.log("the spots");
-    console.log(spots);
+    
 
 };
 
