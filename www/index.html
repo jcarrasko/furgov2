@@ -42,27 +42,42 @@
             user-zoom: fixed;
             min-zoom: 100%;
         }
-        /*@-ms-viewport { user-zoom: zoom ; min-zoom: 100% ; max-zoom: 200% ; }   @viewport { user-zoom: zoom ; min-zoom: 100% ; max-zoom: 200% ; }*/
+        /* Prevent FOUC */
         
-         
+        body {
+            opacity: 0;
+        }
+        
+        #map_page {
+            width: 100%;
+            height: 100%
+        }
+        
+        #map_content {
+            padding: 0;
+            width: 100%;
+            height: 100%
+        }
+        /*@-ms-viewport { user-zoom: zoom ; min-zoom: 100% ; max-zoom: 200% ; }   @viewport { user-zoom: zoom ; min-zoom: 100% ; max-zoom: 200% ; }*/
     </style>
 
 
 
 
-    <link rel="stylesheet" type="text/css" href="jqm/jquery.mobile-min.css" />
+    <!--link rel="stylesheet" type="text/css" href="jqm/jquery.mobile-min.css" />
     <link rel="stylesheet" href="css/app.css">
-    <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less">
-    
-    <!--restyling  
+    <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less"-->
+
+    <!--restyling -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
     <link rel="stylesheet" href="http://nd2.godesign.ch/vendor/waves/waves.min.css">
     <link rel="stylesheet" href="http://nd2.godesign.ch/css/nativedroid2.css">
-    
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <!--script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script-->
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
     <script src="http://nd2.godesign.ch/vendor/waves/waves.min.js"></script>
     <script src="http://nd2.godesign.ch/vendor/wow/wow.min.js"></script>
     <script src="http://nd2.godesign.ch/js/nativedroid2.js"></script>
@@ -70,7 +85,11 @@
 
     <!-end restyling-->
 
-    
+    <!--style>
+        body {
+            overflow: hidden;
+        }
+    </style-->
 
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
@@ -123,25 +142,61 @@
 
 <body>
 
-
-
     <div data-role="page" id="home">
-        <div data-role="header" data-position="fixed">
-            <h1 id="fvw_location_name">Furgoperfectos v2.0 Home</h1>
-            <div class="widget-container content-area horiz-area wrapping-col right">
-                <a class="widget uib_w_3 d-margins" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-mini="true" data-icon="gear" data-iconpos="notext" id="show_prefs"></a>
+
+
+
+        <div data-role="panel" id="bottomsheetblock" class="ui-bottom-sheet ui-bottom-sheet-list" data-animate="false" data-position='bottom' data-display="overlay">
+            <div class='row around-xs'>
+                <div class='col-xs-auto'>
+                    <a id="fvw_all_spots_button" href="#search-page" class='ui-bottom-sheet-link ui-btn ui-btn-inline waves-effect waves-button waves-effect waves-button'><i class='zmdi zmdi-search'></i><strong> Buscar</strong></a>
+                </div>
+                <div class='col-xs-auto'>
+                    <a href="#map_page" class='ui-bottom-sheet-link ui-btn ui-btn-inline waves-effect waves-button waves-effect waves-button'><i class='zmdi zmdi-navigation'></i><strong> Mapa</strong></a>
+                </div>
+                <div class='col-xs-auto'>
+                    <div class="box">
+                        <a id="fvw_user_location_button" href="#" class='ui-bottom-sheet-link ui-btn ui-btn-inline waves-effect waves-button waves-effect waves-button'><i class='zmdi zmdi-favorite'></i><strong> Favoritos</strong></a>
+                    </div>
+                </div>
+                <div class='col-xs-auto'>
+                    <div class="box">
+                        <a id="show_prefs" href="#" class='ui-bottom-sheet-link ui-btn ui-btn-inline waves-effect waves-button waves-effect waves-button'><i class='zmdi zmdi-refresh-sync'></i><strong> Actualizar</strong></a>
+                    </div>
+                </div>
+
             </div>
+
         </div>
 
+
+
+
+
+        <div data-role="header" data-position="fixed" class="wow fadeIn ui-header ui-bar-inherit ui-header-fixed slidedown ui-header ui-header-fullscreen ui-bar-inherit ui-header-fixed slidedown" role="banner">
+            <a href="#bottomsheetblock" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-more-vert"></i></a>
+            <a id="search_button" href="#search-page" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-search"></i></a>
+            <h1 class="wow fadeIn" data-wow-delay='0.4s' id="fvw_location_name">Header &amp; Footer</h1>
+        </div>
+        <!--div data-role="page" id="home">
+            <div data-role="header" data-position="fixed">
+                <h1 id="fvw_location_name">Furgoperfectos v2.0 Home</h1>
+                <div class="widget-container content-area horiz-area wrapping-col right">
+                    <a class="widget uib_w_3 d-margins" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-mini="true" data-icon="gear" data-iconpos="notext" id="show_prefs"></a>
+                </div>
+                </div-->
+
         <div data-role="content">
-            <!--img id="fvw_logo" src="img/logo_furgovw.png"-->
             <div>
                 <p id="fvw_user_location_input">Barcelona, Catalunya</p>
             </div>
 
+
+
             <ul id="spots_list_list" data-role="listview" data-inset="true" data-filter="true">
             </ul>
         </div>
+        <!--
         <div data-role="footer" data-position="fixed" class="container-group inner-element uib_w_11" data-uib="jquery_mobile/footer" data-ver="0">
 
             <div class="widget-container wrapping-col single-centered">
@@ -156,6 +211,29 @@
             <div class="widget-container content-area horiz-area wrapping-col left"></div>
             <div class="widget-container content-area horiz-area wrapping-col right"></div>
         </div>
+-->
+        <div data-role="footer" data-position="fixed">
+            <div class="row center-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <a id="fvw_all_spots_button" href="#search-page" class="ui-btn ui-mini nd2-btn-icon-block"><i class='zmdi zmdi-search'></i> Buscar</a>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <a href="#map_page" class="ui-btn ui-mini nd2-btn-icon-block"><i class='zmdi zmdi-navigation'></i> Mapa</a>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <a id="fvw_user_location_button" href="#" class="ui-btn ui-mini nd2-btn-icon-block"><i class='zmdi zmdi-favorite'></i> Favoritos</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
 
 
 
@@ -164,8 +242,10 @@
 
     <!-- Map Page -->
     <div id="map_page" data-role="page">
-        <div data-role="header" data-add-back-btn="true" data-position="fixed">
-            <h1>furgovw.org</h1>
+        <div data-role="header" data-position="fixed">
+            <a href="#bottomsheetblock" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-more-vert"></i></a>
+            <a href="../toolbar/" data-rel="back" class="ui-btn-left ui-chevron-left   ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all ui-btn-active" data-role="button" role="button"></a>
+            <h1>Mapa</h1>
         </div>
 
         <div id="map_content" data-role="content">
@@ -186,9 +266,13 @@
     </div>
 </div> -->
 
+
+
+    <!--- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Se usa ? -->
     <div id="spot-detail" data-id="" data-role="page">
 
-        <div data-role="header" data-position="fixed" data-add-back-btn="true">
+        <div data-role="header" data-position="fixed">
+            <a href="../toolbar/" data-rel="back" class="ui-btn-left ui-chevron-left   ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all ui-btn-active" data-role="button" role="button"></a>
             <h1>furgovw.org</h1>
         </div>
 
@@ -223,7 +307,8 @@
     </div>
 
     <div id="location-detail" data-id="" data-role="page">
-        <div data-role="header" data-position="fixed" data-add-back-btn="true" data-back-btn-text="">
+        <div data-role="header" data-position="fixed" data-back-btn-text="">
+            <a href="../toolbar/" data-rel="back" class="ui-btn-left ui-chevron-left   ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all ui-btn-active" data-role="button" role="button"></a>
             <h1 id="fvw_location_name">furgovw.org</h1>
         </div>
 
@@ -240,53 +325,68 @@
 
     <!-- search page -->
     <div data-role="page" id="search-page">
-        <div data-role="header" data-add-back-btn="true" data-position="fixed">
+        <div data-role="header" data-position="fixed">
+            <a href="../toolbar/" data-rel="back" class="ui-btn-left ui-alt-icon ui-nodisc-icon ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all ui-btn-active" data-role="button" role="button">Back</a>
             <h1>Furgoperfectos v2.0</h1>
         </div>
 
         <div data-role="content">
-            
-        <form id="search_form" action="#home">
-          <div class="table-thing with-label widget uib_w_9 d-margins" data-uib="jquery_mobile/select" data-ver="0">
-            <label class="narrow-control label-top-left">Tipo</label>
-            <div data-role="fieldgroup" class= "wide-control"="">
-              <select data-mini="true" name="type" id="type">
-                <option value="0">Furgoperfecto</option>
-                <option value="1">Area AC</option>
-                <option value="2">Via Verde</option>
-                <option value="4">Camping</option>
-                <option value="5">Centro Comercial</option>
-                <option value="3">Otros 3</option>
-                <option value="6">Otros 6</option>
-              </select>
-            </div>
-          </div>
-          <div class="table-thing with-label widget uib_w_6 d-margins" data-uib="jquery_mobile/select" data-ver="0">
-            <label class="narrow-control label-top-left">Estado</label>
-            <div data-role="fieldgroup" class= "wide-control"="">
-              <select data-mini="true" name="country" id="country">
-                <option>Catalunya</option>
-                <option>España</option>
-                <option>bla</option>
-              </select>
-            </div>
-          </div>
-          <div class="table-thing with-label widget uib_w_8 d-margins" data-uib="jquery_mobile/select" data-ver="0">
-            <label class="narrow-control label-top-left">Area</label>
-            <div data-role="fieldgroup" class= "wide-control"="">
-              <select name="area" id="area">
-                <option>Catalunya</option>
-                <option>Bla</option>
-              </select>
-            </div>
-          </div>
-            <input type="submit" value="Buscar" data-icon="search" data-mini="true" onclick="alert:('hola');"/>
-            
-           
-      
+
+            <form id="search_form" action="#home">
+
+
+                <div class="ui-select"><a data-rel="popup" class="ui-btn ui-icon-carat-d ui-btn-icon-right ui-corner-all ui-shadow waves-effect waves-button waves-effect waves-button" aria-haspopup="true" id="select-choice-1b-button" role="button" href="#select-choice-1b-listbox"><span>Tipo</span></a>
+                    <select tabindex="-1" name="select-choice-1" id="select-choice-1b" data-native-menu="false">
+                        <option value="0">Furgoperfecto</option>
+                        <option value="1">Area AC</option>
+                        <option value="2">Via Verde</option>
+                        <option value="4">Camping</option>
+                        <option value="5">Centro Comercial</option>
+                        <option value="3">Otros 3</option>
+                        <option value="6">Otros 6</option>
+                    </select>
+                    <div id="select-choice-1b-listbox-placeholder" style="display: none;">
+                        <!-- placeholder for select-choice-1b-listbox -->
+                    </div>
+                </div>
+
+
+
+
+                <div class="table-thing with-label widget uib_w_9 d-margins" data-uib="jquery_mobile/select" data-ver="0">
+                    <label class="narrow-control label-top-left"></label>
+                    <div data-role="fieldgroup" class="wide-control"="">
+                        <select data-mini="true" name="type" id="type">
+
+                        </select>
+                    </div>
+                </div>
+                <div class="table-thing with-label widget uib_w_6 d-margins" data-uib="jquery_mobile/select" data-ver="0">
+                    <label class="narrow-control label-top-left">Estado</label>
+                    <div data-role="fieldgroup" class="wide-control"="">
+                        <select data-mini="true" name="country" id="country">
+                            <option>Catalunya</option>
+                            <option>España</option>
+                            <option>bla</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-thing with-label widget uib_w_8 d-margins" data-uib="jquery_mobile/select" data-ver="0">
+                    <label class="narrow-control label-top-left">Area</label>
+                    <div data-role="fieldgroup" class="wide-control"="">
+                        <select name="area" id="area">
+                            <option>Catalunya</option>
+                            <option>Bla</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="submit" value="Buscar" data-icon="search" data-mini="true" onclick="alert:('hola');" />
+
+
+
             </form>
-            
-            
+
+
             <!--ul id="all_spots_list" data-role="listview" data-inset="true" data-filter="true">
             </ul-->
         </div>

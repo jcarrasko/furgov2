@@ -70,7 +70,7 @@ spotService.createDatabase = function () {
  * Updates the database with the list of spots if is needed
  */
 
-spotService.updateDatabase = function (spotList,callback) {
+spotService.updateDatabase = function (spotList, callback) {
 
     spotService.db.transaction(function (tx) {
 
@@ -82,7 +82,7 @@ spotService.updateDatabase = function (spotList,callback) {
             tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude, description) VALUES (?,?,?,?,?,?)", [spot.id, spot.icono, spot.nombre, spot.lat, spot.lng, spot.destomtom]);
 
         }
-        
+
         spotService.loadSpotsFromDatabase(callback);
 
     }, function (err) {
@@ -97,27 +97,29 @@ spotService.updateDatabase = function (spotList,callback) {
 
 spotService.loadSpotsFromDatabase = function (callback) {
 
-    var spots=[];
+    var spots = [];
     spotService.db.transaction(function (tx) {
         tx.executeSql('SELECT * FROM SPOTS ', [], function (tx, results) {
             if (results.rows.length > 0) {
                 for (var i = 0; i < results.rows.length; i++) {
-                    console.log(results.rows.item(i));
-                    id=results.rows.item(i)[id];
-                    spots[id]=results.rows.item(i);
+                    //console.log(results.rows.item(i));
+                    id = results.rows.item(i)['id'];
+                    //console.log(id);
+                    spots[i] = results.rows.item(i);
                 }
             }
+            console.log("spotService.The spots returned from loadSpotsFromDatabase:");
+            // callback to the main function
+            callback(spots);
 
         });
-    console.log("spotService.The spots returned from loadSpotsFromDatabase:");
-    console.log(spots);
-    // callback to the main function
-    callback(spots);
+
+
 
     }, function (err) {
         console.log("spotService.Error loading the database: " + err.message);
     });
-    
+
 
 };
 
