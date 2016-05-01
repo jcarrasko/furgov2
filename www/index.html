@@ -69,32 +69,59 @@
     <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less"-->
 
     <!--restyling -->
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
-    <link rel="stylesheet" href="http://nd2.godesign.ch/vendor/waves/waves.min.css">
-    <link rel="stylesheet" href="http://nd2.godesign.ch/css/nativedroid2.css">
+    <link rel="stylesheet" href="css/font-awesome/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/jquerymobile/jquery.mobile.min.css" />
+    <link rel="stylesheet" href="vendor/waves/waves.min.css">
+    <link rel="stylesheet" href="css/nativedroid2/nativedroid2.css">
+     <link rel="stylesheet" href="css/nativedroid2/material-design-iconic-font.min.css">
 
-    <!--script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script-->
+    <script src="vendor/jquerymobile/jquery.min.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+    <script src="vendor/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
 
-    <script src="http://nd2.godesign.ch/vendor/waves/waves.min.js"></script>
-    <script src="http://nd2.godesign.ch/vendor/wow/wow.min.js"></script>
-    <script src="http://nd2.godesign.ch/js/nativedroid2.js"></script>
-    <script src="http://nd2.godesign.ch/nd2settings.js"></script>
+    <script src="vendor/waves/waves.min.js"></script>
+    <script src="vendor/wow/wow.min.js"></script>
+    <script src="js/nativedroid2/nativedroid2.js"></script>
+    <script src="js/nativedroid2/nd2settings.js"></script>
 
-    <!-end restyling-->
+    <!-end restyling -->
 
-    <!--style>
-        body {
+    <style>
+        /*body {
             overflow: hidden;
+        }*/
+        
+        /* overwrite nd2 default cards */
+        
+        .nd2-card .card-title .card-subtitle {
+            font-size: 14px;
+            margin: 0px;
+            color: #8e8e8e;
+            font-weight: 400;
+            line-height: 20px;
+            max-width: 90%;
+            overflow: inherit;
+            white-space: normal;
+            text-overflow: inherit;
         }
-    </style-->
+        
+        .nd2-card .card-title .card-primary-title {
+            margin: 0px;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 26px;
+            max-width: 90%;
+            overflow: inherit;
+            white-space: normal;
+            text-overflow: inherit;
+        }
+    </style>
 
     <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+    <!--script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+    
+    <script type="text/javascript" src="jqm/jquery.mobile-min.js"></script-->
     <script type="text/javascript" src="js/jquery.jsonp.js"></script>
-    <script type="text/javascript" src="jqm/jquery.mobile-min.js"></script>
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
@@ -108,6 +135,12 @@
 
     <script type="text/javascript">
         app.initialize();
+    </script>
+    
+    <script> 
+    $(function(){
+      $("#menu_include").load("includes/menu.html"); 
+    });
     </script>
 
     <title>Furgovw Furgoperfectos v2</title>
@@ -144,35 +177,10 @@
 
     <div data-role="page" id="home">
 
-
-
         <div data-role="panel" id="bottomsheetblock" class="ui-bottom-sheet ui-bottom-sheet-list" data-animate="false" data-position='bottom' data-display="overlay">
-            <div class='row around-xs'>
-                <div class='col-xs-auto'>
-                    <a id="fvw_all_spots_button" href="#search-page" class='ui-bottom-sheet-link ui-btn ui-btn-inline waves-effect waves-button waves-effect waves-button'><i class='zmdi zmdi-search'></i><strong> Buscar</strong></a>
-                </div>
-                <div class='col-xs-auto'>
-                    <a href="#map_page" class='ui-bottom-sheet-link ui-btn ui-btn-inline waves-effect waves-button waves-effect waves-button'><i class='zmdi zmdi-navigation'></i><strong> Mapa</strong></a>
-                </div>
-                <div class='col-xs-auto'>
-                    <div class="box">
-                        <a id="fvw_user_location_button" href="#" class='ui-bottom-sheet-link ui-btn ui-btn-inline waves-effect waves-button waves-effect waves-button'><i class='zmdi zmdi-favorite'></i><strong> Favoritos</strong></a>
-                    </div>
-                </div>
-                <div class='col-xs-auto'>
-                    <div class="box">
-                        <a id="show_prefs" href="#" class='ui-bottom-sheet-link ui-btn ui-btn-inline waves-effect waves-button waves-effect waves-button'><i class='zmdi zmdi-refresh-sync'></i><strong> Actualizar</strong></a>
-                    </div>
-                </div>
-
-            </div>
+            <div id="menu_include" data-src="includes/menu.html"></div>
 
         </div>
-
-
-
-
-
         <div data-role="header" data-position="fixed" class="wow fadeIn ui-header ui-bar-inherit ui-header-fixed slidedown ui-header ui-header-fullscreen ui-bar-inherit ui-header-fixed slidedown" role="banner">
             <a href="#bottomsheetblock" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-more-vert"></i></a>
             <a id="search_button" href="#search-page" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-search"></i></a>
@@ -188,7 +196,7 @@
 
         <div data-role="content">
             <div>
-                <p id="fvw_user_location_input">Barcelona, Catalunya</p>
+                <p id="fvw_user_location_input"><i class="zmdi zmdi-my-location">zz</i>Barcelona, Catalunya</p>
             </div>
 
 
@@ -230,21 +238,14 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
-
-
-
-
-
     </div>
 
     <!-- Map Page -->
     <div id="map_page" data-role="page">
         <div data-role="header" data-position="fixed">
             <a href="#bottomsheetblock" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-more-vert"></i></a>
-            <a href="../toolbar/" data-rel="back" class="ui-btn-left ui-chevron-left   ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all ui-btn-active" data-role="button" role="button"></a>
+            <a data-role="button" role="button" data-rel="back" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-chevron-left"></i></a>
             <h1>Mapa</h1>
         </div>
 
@@ -298,12 +299,6 @@
             <div class="widget-container content-area horiz-area wrapping-col left"></div>
             <div class="widget-container content-area horiz-area wrapping-col right"></div>
         </div>
-
-
-
-
-
-
     </div>
 
     <div id="location-detail" data-id="" data-role="page">
@@ -326,74 +321,49 @@
     <!-- search page -->
     <div data-role="page" id="search-page">
         <div data-role="header" data-position="fixed">
-            <a href="../toolbar/" data-rel="back" class="ui-btn-left ui-alt-icon ui-nodisc-icon ui-btn ui-icon-carat-l ui-btn-icon-notext ui-corner-all ui-btn-active" data-role="button" role="button">Back</a>
+
+            <a href="#bottomsheetblock" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-more-vert"></i></a>
+            <a data-role="button" role="button" data-rel="back" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-chevron-left"></i></a>
+
             <h1>Furgoperfectos v2.0</h1>
         </div>
 
         <div data-role="content">
-
             <form id="search_form" action="#home">
-
-
-                <div class="ui-select"><a data-rel="popup" class="ui-btn ui-icon-carat-d ui-btn-icon-right ui-corner-all ui-shadow waves-effect waves-button waves-effect waves-button" aria-haspopup="true" id="select-choice-1b-button" role="button" href="#select-choice-1b-listbox"><span>Tipo</span></a>
-                    <select tabindex="-1" name="select-choice-1" id="select-choice-1b" data-native-menu="false">
-                        <option value="0">Furgoperfecto</option>
-                        <option value="1">Area AC</option>
-                        <option value="2">Via Verde</option>
-                        <option value="4">Camping</option>
-                        <option value="5">Centro Comercial</option>
-                        <option value="3">Otros 3</option>
-                        <option value="6">Otros 6</option>
-                    </select>
-                    <div id="select-choice-1b-listbox-placeholder" style="display: none;">
-                        <!-- placeholder for select-choice-1b-listbox -->
-                    </div>
-                </div>
-
-
-
-
-                <div class="table-thing with-label widget uib_w_9 d-margins" data-uib="jquery_mobile/select" data-ver="0">
-                    <label class="narrow-control label-top-left"></label>
-                    <div data-role="fieldgroup" class="wide-control"="">
-                        <select data-mini="true" name="type" id="type">
-
-                        </select>
-                    </div>
-                </div>
-                <div class="table-thing with-label widget uib_w_6 d-margins" data-uib="jquery_mobile/select" data-ver="0">
-                    <label class="narrow-control label-top-left">Estado</label>
-                    <div data-role="fieldgroup" class="wide-control"="">
-                        <select data-mini="true" name="country" id="country">
-                            <option>Catalunya</option>
-                            <option>España</option>
-                            <option>bla</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="table-thing with-label widget uib_w_8 d-margins" data-uib="jquery_mobile/select" data-ver="0">
-                    <label class="narrow-control label-top-left">Area</label>
-                    <div data-role="fieldgroup" class="wide-control"="">
-                        <select name="area" id="area">
-                            <option>Catalunya</option>
-                            <option>Bla</option>
-                        </select>
-                    </div>
-                </div>
-                <input type="submit" value="Buscar" data-icon="search" data-mini="true" onclick="alert:('hola');" />
-
-
-
+                <label for="search_type" class="select">Tipo:</label>
+                <select tabindex="-1" name="search_type" id="search_type" data-native-menu="false">
+                    <option value="100">Todos</option>
+                    <option value="0">Furgoperfecto</option>
+                    <option value="1">Area AC</option>
+                    <option value="2">Via Verde</option>
+                    <option value="4">Camping</option>
+                    <option value="5">Centro Comercial</option>
+                    <option value="3">Otros 3</option>
+                    <option value="6">Otros 6</option>
+                </select>
+                <label for="search_state" class="select">Estado:</label>
+                <select tabindex="-1" name="search_state" id="search_state" data-native-menu="false">
+                    <option value="100">Todos</option>
+                    <option>Catalunya</option>
+                    <option>Pais Vasco</option>
+                    <option>Galicia</option>
+                    <option>España</option>
+                    <option>Francia</option>
+                </select>
+                <label for="search_area" class="select">Area</label>
+                <select tabindex="-1" name="search_area" id="search_area" data-native-menu="false">
+                    <option value="100">Todas</option>
+                    <option>Aragon</option>
+                    <option>Andalucia</option>
+                    <option>Valencia</option>
+                </select>
+                <br/>
+                <br/>
+                <button class="ui-btn waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-send"></i> Buscamelo</button>
             </form>
-
-
-            <!--ul id="all_spots_list" data-role="listview" data-inset="true" data-filter="true">
-            </ul-->
         </div>
+
     </div>
-
-
-
 </body>
 
 </html>
