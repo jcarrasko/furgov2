@@ -16,7 +16,7 @@ var map;
 
     // Variables
     furgovw.markers = [];
-    furgovw.isOnline = false;
+    furgovw.isOnline = false; // Has internet connection ?
     furgovw.isGeoPositionated = false;
     furgovw.spots = [];
 
@@ -79,20 +79,16 @@ var map;
         console.log("furgo spots");
         console.log(furgovw.spots);
 
-        // Canviar per un update reload...
+        /* Canviar per un update reload...
         $('#fvw_logo')
             .on('click', function () {
                 furgovw.main();
             });
+            */
 
 
 
-
-
-
-
-
-        $('#show_prefs')
+        $('#show_prefs') // needed to check
             .on('click', function () {
                 furgovw.updateDatabase();
             });
@@ -127,8 +123,7 @@ var map;
     furgovw.main = function () {
 
         /*   var networkState = navigator.connection.type;
-
-           var states = {};
+          var states = {};
            states[Connection.UNKNOWN] = 'Unknown connection';
            states[Connection.ETHERNET] = 'Ethernet connection';
            states[Connection.WIFI] = 'WiFi connection';
@@ -137,7 +132,6 @@ var map;
            states[Connection.CELL_4G] = 'Cell 4G connection';
            states[Connection.CELL] = 'Cell generic connection';
            states[Connection.NONE] = 'No network connection';
-
            // alert('Connection type: ' + states[networkState]);*/
 
         console.log("Connection: " + navigator.connection.type);
@@ -146,21 +140,24 @@ var map;
 
         //If there's no internet connection
         if (navigator.connection.type == Connection.NONE) {
-            // popErrorMessage('Lo siento, esta aplicación necesita que tengas conexión a internet');
+            console.log("furgovw.No connection is available. Type of connection is " + Connection.NONE);
             furgovw.isOnline = false;
+        } else {
+            // sets the current location
+            geoService.getCurrentLocation(furgovw.setLocation);
         }
-
-        //Get user location
-        console.log('Starting to get location...');
-        geoService.getCurrentLocation(furgovw.setLocation);
-
-
 
     };
 
 
     /*
-     * Callback function used to set current address
+     * Sets the location dependending
+     */
+
+
+
+    /*
+     * Callback function used to set current address via google APIS
      */
 
     furgovw.setLocation = function (currentLocation) {
@@ -327,10 +324,10 @@ var map;
 
     /* 
     / Load all spots from datasource
-     
-    furgovw.loadAllSpots = function () {
+    */
+    furgovw.loadTEMPOAllSpots = function () {
 
-        mapApiUrl = furgovw.getDataSource();
+        mapApiUrl = furgovw.options.offlineUrl;
         console.log("Loading all spots from Datasource:" + mapApiUrl);
 
         $('#all_spots_list')
@@ -344,47 +341,51 @@ var map;
 
         $.getJSON(mapApiUrl, function (spots) {
 
+                furgovw.spots = spots.slice(100, 110); // temporal for making test
 
-
-
-                furgovw.spots = spots;
-
-                $.each(spots, function (index, spot) {
+                $.each(furgovw.spots , function (index, spot) {
 
                     // calculate the distance
                     spot.distance = geoService.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.lng, spot.lat);
 
+                    
+                     $('#spots_list_list').append('<div class="nd2-card card-media-right card-media-small"><div class="card-media"><img src="data/thumbs/' + spot.id + '.jpg"></div>	<div class="card-title has-supporting-text">						<h6 class="card-primary-title">' + spot.nombre + '</h6><h5 class="card-subtitle">' + '<p>' + parseFloat(spot.distance).toFixed(1) + ' kms</p>' + spot.destomtom + '</h5>			</div>	                                                        <div class="card-action">									<div class="row between-xs">										<div class="col-xs-12 align-right">											<div class="box">											<a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-favorite"></i></a>												<a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-bookmark"></i></a>												<a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-reply zmd-flip-horizontal"></i></a>											</div>										</div>									</div>								</div></div>');
 
-                    /* $('#all_spots_list')
+                    
+                    /*
+                     $('#all_spots_list')
                          .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '<img class="spots_list_picture" src="http://www.furgovw.org/tt.php?src=' + encodeURIComponent(spot.imagen) + '&w=80&h=80"></a></li>');  
 
                     $('#all_spots_list')
                         .append('<li><a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '"><img class="spots_list_picture" src="data/thumbs/' + spot.id + '.jpg">' + '<h2>' + spot.nombre + '</h2>' + '<p>' + parseFloat(spot.distance) + ' kms</p>' + '</p>' + spot.destomtom + '</p></a></li>');
+                        */
 
-
-                });
+               // });
 
                 //$('#all_spots_list')
                 //     .listview('refresh', true);
                 $('#fvw_all_spots_button')
                     .attr('href', '#search-page');
-            }
-            /* ,
+           // }/*
+            /*  ,
                         error: function() {
                             popErrorMessage('Lo siento, parece que hay un problema con la conexión a furgovw.org');
                             return;
                               
-                    } 
-        );
+                    } */
+                });
+    });
+ 
+
     };
-
-    */
-
-
 
 
     furgovw.loadSpots = function () {
 
+        
+        //HACK
+        furgovw.loadTEMPOAllSpots();
+        return;
 
         $('#spots_list_list')
             .empty();
@@ -394,37 +395,38 @@ var map;
             contentType: "application/json; charset=utf-8"
         });
 
+        
+     
         mapApiUrl =
             this.options.apiUrl +
             '?latitude=' + encodeURIComponent(furgovw.userLatitude) +
             '&longitude=' + encodeURIComponent(furgovw.userLongitude);
-        console.log(mapApiUrl);
 
-        $.jsonp({
+      
+
+        console.log("MAP URL is " + mapApiUrl);
+
+      $.jsonp({
             url: mapApiUrl,
             callbackParameter: 'callback',
             success: function (spots) {
+                
+         
+ 
+
+                
+                
+                
                 console.log('furgovw: Loaded data from api');
                 //furgovw.spots = spots;
 
                 //spots = spotService.loadSpotsFromDatabase();
 
                 $.each(spots, function (index, spot) {
-
-                    /* $('#spots_list_list')
-                         .append( '< div class = "nd2-card card-media-right card-media-small" >
-                         < div class = "card-media" >
-                             < img src = "/img/examples/card_thumb_1.jpg" >
-                             < /div>
-
-                             < div class = "card-title" >
-                             < h3 class = "card-primary-title" > Bridge < /h3> < h5 class = "card-subtitle" > A bridge is a structure built to span physical obstacles such as a body of water, valley, or road,
-                             for the purpose of providing passage over the obstacle. < /h5> < /div>'
-
-                             < /div>)');*/
+ 
 
 
-                    $('#spots_list_list').append('<div class="nd2-card card-media-right card-media-small"><div class="card-media"><img src="http://www.furgovw.org/tt.php?src=' + encodeURIComponent(spot.imagen) + '&w=80&h=80"></div>	<div class="card-title has-supporting-text">						<h6 class="card-primary-title">' + spot.nombre + '</h6><h5 class="card-subtitle">' + '<p>' + parseFloat(spot.distance).toFixed(1) + ' kms</p>' + spot.destomtom + '</h5>			</div>	                                                        <div class="card-action">									<div class="row between-xs">										<div class="col-xs-12 align-right">											<div class="box">											<a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-favorite"></i></a>												<a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-bookmark"></i></a>												<a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-reply zmd-flip-horizontal"></i></a>											</div>										</div>									</div>								</div> 			</div>');
+                    $('#spots_list_list').append('<div class="nd2-card card-media-right card-media-small"><div class="card-media"><img src="http://www.furgovw.org/tt.php?src=' + encodeURIComponent(spot.imagen) + '&w=80&h=80"></div>	<div class="card-title has-supporting-text">						<h6 class="card-primary-title">' + spot.nombre + '</h6><h5 class="card-subtitle">' + '<p>' + parseFloat(spot.distance).toFixed(1) + ' kms</p>' + spot.destomtom + '</h5>			</div>	                                                        <div class="card-action">									<div class="row between-xs">										<div class="col-xs-12 align-right">											<div class="box">											<a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-favorite"></i></a>												<a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-bookmark"></i></a>												<a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-reply zmd-flip-horizontal"></i></a>											</div>										</div>									</div>								</div></div>');
 
 
 

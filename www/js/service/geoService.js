@@ -16,6 +16,8 @@ function Location(latitude, longitude, address, locality, area, country) {
 var geoService = {};
 
 geoService.defaultLocation = "Barcelona";
+geoService.defaultLatitude="41,2349";
+geoService.defaultLongitude="2.117";
 geoService.geocoder = new google.maps.Geocoder();
 
 geoService.currentLocation = "";
@@ -27,9 +29,6 @@ geoService.currentLocation = "";
 geoService.initService = function () {
 
     console.log("geoService::initializing geoService");
-
-    // get current Location
-
 
 };
 
