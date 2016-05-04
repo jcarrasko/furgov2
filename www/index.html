@@ -15,6 +15,7 @@
 
     <!-- <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1"> -->
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=no">
+
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, minimum-scale=1, maximum-scale=2"> -->
 
     <style>
@@ -73,7 +74,7 @@
     <link rel="stylesheet" href="css/jquerymobile/jquery.mobile.min.css" />
     <link rel="stylesheet" href="vendor/waves/waves.min.css">
     <link rel="stylesheet" href="css/nativedroid2/nativedroid2.css">
-     <link rel="stylesheet" href="css/nativedroid2/material-design-iconic-font.min.css">
+    <link rel="stylesheet" href="css/nativedroid2/material-design-iconic-font.min.css">
 
     <script src="vendor/jquerymobile/jquery.min.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
@@ -90,7 +91,6 @@
         /*body {
             overflow: hidden;
         }*/
-        
         /* overwrite nd2 default cards */
         
         .nd2-card .card-title .card-subtitle {
@@ -115,6 +115,10 @@
             white-space: normal;
             text-overflow: inherit;
         }
+        
+        .search-header {
+            background-color: transparent;
+        }
     </style>
 
     <script type="text/javascript" src="cordova.js"></script>
@@ -136,14 +140,184 @@
     <script type="text/javascript">
         app.initialize();
     </script>
-    
-    <script> 
-    $(function(){
-      $("#menu_include").load("includes/menu.html"); 
-    });
+
+    <script>
+        $(function () {
+            $("#menu_include").load("includes/menu.html");
+        });
+
+
+
+
+        // nd2Search
+        (function ($) {
+            $.nd2Search = function (options) {
+
+                var _self = this;
+
+                _self.defaults = {
+                    placeholder: "Search",
+                    source: [],
+                    defaultIcon: 'star',
+                    fn: function (r) {
+                        console.log("No Callback function defined.");
+                    }
+                };
+
+                _self.options = $.extend(_self.defaults, options);
+
+                _self.applyWaves = function () {
+                    if (typeof Waves !== "undefined") {
+                        Waves.attach('.nd2-search-button, .nd2-search-back-button', ['waves-button']);
+                        Waves.init();
+                    }
+                };
+
+                _self.getSearchButton = function (offset) {
+
+                    return "<a href='#' class='ui-btn ui-btn-right wow fadeIn nd2-search-button' style='margin-right: " + offset + "px;' data-wow-delay='1s'><i class='zmdi zmdi-search'></i></a>";
+                };
+
+                _self.getBackButton = function () {
+
+                    return "<a href='#' class='ui-btn ui-btn-left wow fadeIn nd2-search-back-button' data-wow-delay='0.2s'><i class='zmdi zmdi-arrow-back'></i></a>";
+                };
+
+                _self.getSearchInput = function () {
+
+                    return "<input id='list_filter' type='text' class='nd2-search-input' value='' placeholder='" + _self.options.placeholder + "' />";
+                };
+
+                _self.activateSearch = function () {
+                    _self.getHeader().addClass("nd2-search-active");
+                    _self.getSearchInputObj().val('').focus();
+                };
+
+                _self.hideSearch = function () {
+                    _self.getHeader().removeClass("nd2-search-active");
+                };
+
+                _self.getHeader = function () {
+                    return $("body").find(".ui-page-active div[data-role='header']").first();
+                };
+
+                _self.getSearchInputObj = function () {
+                    return _self.getHeader().find('.nd2-search-input');
+                };
+
+                _self.bindEvents = function () {
+                    _self.getHeader()
+                        .on('click', '.nd2-search-button', function (e) {
+                            e.preventDefault();
+                            _self.activateSearch();
+                        })
+                        .on('click', '.nd2-search-back-button', function (e) {
+                            e.preventDefault();
+                            _self.hideSearch();
+                        });
+
+                    _self.bindAutocomplete();
+
+                };
+
+                _self.bindAutocomplete = function () {
+                    return;
+                    _self.getSearchInputObj().autocomplete({
+                            delay: 500,
+                            minLength: 1,
+                            source: _self.options.source,
+                            select: function (e, ui) {
+                                if (typeof ui.item !== 'undefined' && typeof ui.item.value !== 'undefined') {
+                                    if (typeof _self.options.fn === 'function') {
+                                        _self.options.fn(ui.item.value);
+                                        _self.hideSearch();
+                                    }
+                                }
+                            }
+                        })
+                        .autocomplete('instance')._renderItem = function (ul, item) {
+                            if (typeof item === 'string') {
+                                item = {
+                                    icon: _self.options.defaultIcon,
+                                    value: item,
+                                    label: item
+                                };
+                            }
+
+                            var icon = (typeof item.icon !== 'undefined') ? "<i class='zmdi zmdi-" + item.icon + "'></i>" : "<i class='zmdi zmdi-" + _self.options.defaultIcon + "'></i>";
+                            return $("<li class='nd2-search-result-item'>")
+                                .attr("data-value", item.value)
+                                .append("<span class='icon'>" + icon + "</span><span class='term'>" + item.label + "</span>")
+                                .appendTo(ul);
+                        };
+
+
+                };
+
+                _self.create = function () {
+
+                    var header = _self.getHeader();
+                    var content = null;
+                    if (header.length > 0) {
+
+                        var firstBtnRight = header.find(".ui-btn-right");
+
+                        if (firstBtnRight.length > 0) {
+                            firstBtnRight.first().before(_self.getSearchButton(firstBtnRight.length * (firstBtnRight.outerWidth())));
+                        } else {
+                            header.append(_self.getSearchButton(0));
+                        }
+
+                        header.css({
+                            'minHeight': header.height() + 'px'
+                        });
+
+                        header.prepend(_self.getBackButton());
+                        header.prepend(_self.getSearchInput());
+
+                        _self.applyWaves();
+                        _self.bindEvents();
+
+                    }
+
+                };
+
+                window.setTimeout(function () {
+                    _self.create();
+                }, 500);
+            };
+
+        }($));
+
+
+
+
+
+        new $.nd2Search({
+            id: "list_filter",
+            placeholder: "Buscar", // Placeholder in the search field
+            defaultIcon: "globe-alt", // optional: icon | null
+            source: [{
+                label: 'Displayed Value',
+                value: 'real-value',
+                icon: 'custom-icon'
+            }], // autocomplete : option-source
+            fn: function (result) { // this function will be executed when a valid result item is selected
+                console.log('--- Your custom handling ---');
+                console.log('you picked: ');
+                console.log(result);
+            }
+        });
+        
+        
+        
+        
+        $("spots_list_list").filterable( "option", "input", "#list_filter" );
+
+         
     </script>
 
-    <title>Furgovw Furgoperfectos v2</title>
+    <title>Furgoperfectos Offline</title>
 
 
     <!-- IMPORTANT: Do not include a weinre script tag as part of your release builds! -->
@@ -181,45 +355,33 @@
             <div id="menu_include" data-src="includes/menu.html"></div>
 
         </div>
+        <!-- Header -->
         <div data-role="header" data-position="fixed" class="wow fadeIn ui-header ui-bar-inherit ui-header-fixed slidedown ui-header ui-header-fullscreen ui-bar-inherit ui-header-fixed slidedown" role="banner">
-            <a href="#bottomsheetblock" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-more-vert"></i></a>
-            <a id="search_button" href="#search-page" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-search"></i></a>
-            <h1 class="wow fadeIn" data-wow-delay='0.4s' id="fvw_location_name">Header &amp; Footer</h1>
-        </div>
-        <!--div data-role="page" id="home">
-            <div data-role="header" data-position="fixed">
-                <h1 id="fvw_location_name">Furgoperfectos v2.0 Home</h1>
-                <div class="widget-container content-area horiz-area wrapping-col right">
-                    <a class="widget uib_w_3 d-margins" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-mini="true" data-icon="gear" data-iconpos="notext" id="show_prefs"></a>
-                </div>
-                </div-->
 
+
+            <!--input id="list_filter" type="text" class="nd2-search-input" value="" placeholder="Buscar"/-->
+
+
+            <a href="#bottomsheetblock" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-more-vert"></i></a>
+            <a id="filter_button" href="#search-page" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-filter-list"></i></a>
+
+
+            <h1 style="visibility: visible; animation-delay: 0.4s; animation-name: fadeIn;" aria-level="1" role="heading" class="wow fadeIn ui-title" data-wow-delay="0.4s">Buscar...</h1>
+
+        </div>
+
+        <!--content-->
         <div data-role="content">
             <div>
-                <p id="fvw_user_location_input"><i class="zmdi zmdi-my-location">zz</i>Barcelona, Catalunya</p>
+                <a href="#map_page" class="ui-btn ui-mini ui-btn-inline waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-my-location" >&nbsp;</i><i   id="fvw_user_location_input"> Barcelona, Catalunya</i></a>
+
             </div>
 
 
-
-            <ul id="spots_list_list" data-role="listview" data-inset="true" data-filter="true">
+            <ul id="spots_list_list" data-role="listview" data-inset="true" data-filter="true" data-input="#list_filter" placeholder="Busca...">
             </ul>
         </div>
-        <!--
-        <div data-role="footer" data-position="fixed" class="container-group inner-element uib_w_11" data-uib="jquery_mobile/footer" data-ver="0">
-
-            <div class="widget-container wrapping-col single-centered">
-                <div data-role="controlgroup" class="uib-jqm-flex widget uib_w_12 d-margins" data-uib="jquery_mobile/button_group" data-ver="0" data-type="horizontal">
-
-                    <a id="fvw_all_spots_button" class="widget uib_w_7" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-mini="true" href="#search-page" data-icon="search" data-iconpos="top">Buscar</a>
-                    <a class="widget uib_w_6" data-uib="jquery_mobile/button" data-ver="0" data-role="button" href="#map_page" data-icon="navigation" data-iconpos="top" data-mini="true">Mapa</a>
-                    <a id="fvw_user_location_button" class="widget uib_w_5" data-uib="jquery_mobile/button" data-ver="0" data-role="button" data-icon="heart" data-mini="true" data-iconpos="top">Favoritas</a>
-
-                </div>
-            </div>
-            <div class="widget-container content-area horiz-area wrapping-col left"></div>
-            <div class="widget-container content-area horiz-area wrapping-col right"></div>
-        </div>
--->
+        <!-- footer -->
         <div data-role="footer" data-position="fixed">
             <div class="row center-xs">
                 <div class="col-xs-4">
@@ -245,7 +407,8 @@
     <div id="map_page" data-role="page">
         <div data-role="header" data-position="fixed">
             <a href="#bottomsheetblock" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-more-vert"></i></a>
-            <a data-role="button" role="button" data-rel="back" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-chevron-left"></i></a>
+            <a data-role="button" role="button" data-rel="back" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-arrow-back"></i></a>
+
             <h1>Mapa</h1>
         </div>
 
@@ -322,16 +485,16 @@
     <div data-role="page" id="search-page">
         <div data-role="header" data-position="fixed">
 
-            <a href="#bottomsheetblock" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-more-vert"></i></a>
-            <a data-role="button" role="button" data-rel="back" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-chevron-left"></i></a>
+            <a href="#" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-check"></i></a>
+            <a data-role="button" role="button" data-rel="back" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-arrow-back"></i></a>
 
-            <h1>Furgoperfectos v2.0</h1>
+            <h1>Filtrar...</h1>
         </div>
 
         <div data-role="content">
             <form id="search_form" action="#home">
-                <label for="search_type" class="select">Tipo:</label>
-                <select tabindex="-1" name="search_type" id="search_type" data-native-menu="false">
+                <label for="search_typeb" class="select">Tipo:</label>
+                <select tabindex="-1" name="search_type" id="search_typeb" data-native-menu="false">
                     <option value="100">Todos</option>
                     <option value="0">Furgoperfecto</option>
                     <option value="1">Area AC</option>
@@ -341,25 +504,25 @@
                     <option value="3">Otros 3</option>
                     <option value="6">Otros 6</option>
                 </select>
-                <label for="search_state" class="select">Estado:</label>
-                <select tabindex="-1" name="search_state" id="search_state" data-native-menu="false">
+                <label for="search_stateb" class="select">Estado:</label>
+                <select tabindex="-1" name="search_state" id="search_stateb" data-native-menu="false">
                     <option value="100">Todos</option>
-                    <option>Catalunya</option>
-                    <option>Pais Vasco</option>
-                    <option>Galicia</option>
-                    <option>España</option>
-                    <option>Francia</option>
+                    <option value="100">Catalunya</option>
+                    <option value="100">Pais Vasco</option>
+                    <option value="100">Galicia</option>
+                    <option value="100">España</option>
+                    <option value="100">Francia</option>
                 </select>
-                <label for="search_area" class="select">Area</label>
-                <select tabindex="-1" name="search_area" id="search_area" data-native-menu="false">
+                <label for="search_areab" class="select">Area</label>
+                <select tabindex="-1" name="search_area" id="search_areab" data-native-menu="false">
                     <option value="100">Todas</option>
-                    <option>Aragon</option>
-                    <option>Andalucia</option>
-                    <option>Valencia</option>
+                    <option value="100">Aragon</option>
+                    <option value="100">Andalucia</option>
+                    <option value="100">Valencia</option>
                 </select>
+                <!--br/>
                 <br/>
-                <br/>
-                <button class="ui-btn waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-send"></i> Buscamelo</button>
+                <button class="ui-btn waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-check"></i> Buscamelo</button-->
             </form>
         </div>
 

@@ -88,6 +88,10 @@ var map;
 
 
 
+
+
+
+
         $('#show_prefs')
             .on('click', function () {
                 furgovw.updateDatabase();

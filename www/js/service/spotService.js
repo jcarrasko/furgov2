@@ -57,7 +57,7 @@ spotService.createDatabase = function () {
     spotService.db.transaction(function (tx) {
 
 
-        tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real,html text,htmlp text,link text,image text,author text,width integer,lenght integer,description text,id_member text, date text,topic_id integer, favourite integer)");
+        tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real,country string, area string, html text,htmlp text,link text,image text,author text,width integer,lenght integer,description text,id_member text, date text,topic_id integer, favourite integer)");
 
     }, function (err) {
         console.log("spotService.Error Creating the database" + err.message);
@@ -96,6 +96,38 @@ spotService.updateDatabase = function (spotList, callback) {
  */
 
 spotService.loadSpotsFromDatabase = function (callback) {
+
+    var spots = [];
+    spotService.db.transaction(function (tx) {
+        tx.executeSql('SELECT * FROM SPOTS ', [], function (tx, results) {
+            if (results.rows.length > 0) {
+                for (var i = 0; i < results.rows.length; i++) {
+                    //console.log(results.rows.item(i));
+                    id = results.rows.item(i)['id'];
+                    //console.log(id);
+                    spots[i] = results.rows.item(i);
+                }
+            }
+            console.log("spotService.The spots returned from loadSpotsFromDatabase:");
+            // callback to the main function
+            callback(spots);
+
+        });
+
+
+
+    }, function (err) {
+        console.log("spotService.Error loading the database: " + err.message);
+    });
+
+
+};
+
+/*
+ * Retrieve the spots from database
+ */
+
+spotService.getCountryList = function (callback) {
 
     var spots = [];
     spotService.db.transaction(function (tx) {
