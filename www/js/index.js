@@ -1,8 +1,4 @@
-/**
- * Club Camper Furgovw's Mobile App
- * Copyright (C) 2012, Club Camper Furgovw (furgovw.org)
- * Created by Javier Montes (@mooontes - http://mooontes.com)
- */
+//furgovw must be included here or in separate
 var app = {
     initialize: function() {
         console.log('initialize');
@@ -15,7 +11,7 @@ var app = {
 
     onDeviceReady: function () {
 
-    console.log('Starting onDeviceReady!');
+    console.log('Calling onDeviceReady!');
      
         
     furgovw.deviceready();

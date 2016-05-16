@@ -1,12 +1,4 @@
-/**
- * FurgoPerfectos 
- * Created by Jose Carrasco (@jcarrasko) derivated from Javier Montes (@mooontes) 
- */
-
-/*
- * Spot Object
- */
-
+//needs to be removed
 function spot(id, type, name, latitude, longitude, html , htmlp, link , image, author, width, lenght, destomtom, id_member, date, topic_id) {
     // Furgo ID
 	this.id = id;

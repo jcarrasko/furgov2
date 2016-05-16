@@ -16,12 +16,12 @@ function Location(latitude, longitude, address, locality, area, country) {
 var geoService = {};
 
 geoService.defaultLocation = "Barcelona";
-geoService.defaultLatitude="41,2349";
-geoService.defaultLongitude="2.117";
-geoService.geocoder = new google.maps.Geocoder();
+geoService.defaultLatitude = "41,2349";
+geoService.defaultLongitude = "2.117";
+
 
 geoService.currentLocation = "";
-
+geoService.geocoder="";
 /*
  *Create the database
  */
@@ -29,6 +29,7 @@ geoService.currentLocation = "";
 geoService.initService = function () {
 
     console.log("geoService::initializing geoService");
+	geoService.geocoder = new google.maps.Geocoder(); // TODO the google script must be downloaded for offline use
 
 };
 
@@ -36,7 +37,18 @@ geoService.initService = function () {
  * Get's the adress via Google Apps API
  */
 
-geoService.getAddress = function (latitude, longitude, callback) {
+geoService.getAddress = function (latitude, longitude, isOnline, callback) {
+	
+	if(isOnline===false){
+		
+		myLocation = new Location(latitude, longitude, null, null, null, null);
+		geoService.currentLocation = myLocation;
+		
+		// callback with the location
+        callback(myLocation);
+		return;
+	}
+
 
     var myLocation;
     currentLatitudeAndLongitude = {
@@ -55,7 +67,7 @@ geoService.getAddress = function (latitude, longitude, callback) {
             
             if (status == google.maps.GeocoderStatus.OK) {
 
-                if (results[0]) {
+                if (results[0] && isOnline===true) {
                     var reverse_geo = results[0];
 
                     address = reverse_geo.formatted_address;
@@ -73,8 +85,11 @@ geoService.getAddress = function (latitude, longitude, callback) {
                 }
             } else {
                 console.log('geoService::geocode status ko' + status);
+				myLocation = new Location(latitude, longitude, null, null, null, null);
+				
+				 geoService.currentLocation = myLocation;
 
-            }
+            }  
 
         });
     }
@@ -85,7 +100,7 @@ geoService.getAddress = function (latitude, longitude, callback) {
  * Get's the adress via Google Apps API
  */
 
-geoService.getCurrentLocation = function (callback) {
+geoService.getCurrentLocation = function (isOnline,callback) {
 
     //Get user location
     console.log('geoService::Starting to get device location.');
@@ -96,7 +111,7 @@ geoService.getCurrentLocation = function (callback) {
         browserSupportFlag = true;
         navigator.geolocation.getCurrentPosition(function (position) {
 
-            initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            //initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
             var currentLatitude = position.coords.latitude;
             var currentLongitude = position.coords.longitude;
@@ -106,7 +121,7 @@ geoService.getCurrentLocation = function (callback) {
             console.log('geoService::current longitude' + currentLongitude);
 
             // get the full location
-            geoService.getAddress(currentLatitude, currentLongitude, callback);
+            geoService.getAddress(currentLatitude, currentLongitude,isOnline, callback);
 
 
         }, function () {
