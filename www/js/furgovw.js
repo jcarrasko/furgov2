@@ -81,6 +81,11 @@ var map;
 		    */
 
 
+		$('#set_current_location') // needed to check
+			.on('click', function () {
+				furgovw.setCurrentLocation();
+			});
+
 
 		$('#show_prefs') // needed to check
 			.on('click', function () {
@@ -117,15 +122,25 @@ var map;
 	furgovw.main = function () {
 
 
-		// sets the current location
-		// depending of the connection
-
-		geoService.getCurrentLocation(connectionService.isOnline(), furgovw.setLocation);
-
+		furgovw.setCurrentLocation();
 
 
 	};
 
+
+	/*
+	 * Callback function used to set current address via google APIS
+	 */
+
+	furgovw.setCurrentLocation = function () {
+
+		// sets the current location
+		// depending of the connection
+		console.log("Setting current Location");
+		geoService.getCurrentLocation(connectionService.isOnline(), furgovw.setLocation);
+
+
+	}
 
 	/*
 	 * Callback function used to set current address via google APIS
@@ -153,13 +168,9 @@ var map;
 		$('#fvw_user_location_input').text(my_place);
 		$('#fvw_location_name').html(my_place);
 
- 
 
-		console.log("loading nearest spots");
-		
-		//spotService.updateSpotDistance( currentLocation, furgovw.loadAllSpots);
-		spotService.updateSpotDistance(currentLocation,furgovw.loadAllSpots);
-		//spotService.loadNearestSpotsFromDatabase(furgovw.loadAllSpots, currentLocation);
+		spotService.updateSpotDistance(currentLocation, furgovw.loadAllSpots);
+
 
 		$('a#fvw_all_spots_button')
 			.attr('href', '#search-page');
@@ -226,7 +237,7 @@ var map;
 		$.each(furgovw.spots, function (index, spot) {
 
 			// calculate the distance
-		//	spot.distance = geoService.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.latitude, spot.longitude);
+			//	spot.distance = geoService.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.latitude, spot.longitude);
 
 
 
