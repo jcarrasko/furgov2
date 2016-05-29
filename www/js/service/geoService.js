@@ -96,6 +96,8 @@ geoService.getAddress = function (latitude, longitude, isOnline, callback) {
 
 };
 
+ 
+
 /*
  * Get's the adress via Google Apps API
  */
@@ -129,12 +131,12 @@ geoService.getCurrentLocation = function (isOnline,callback) {
 
             if (errorFlag === true) {
                 console.log("Geolocation service failed.");
-                initialLocation = newyork;
+               
             } else {
-                console.log("Your browser doesn't support geolocation. We've placed you in Siberia.");
-                initialLocation = siberia;
+                console.log("Your browser doesn't support geolocation. We've placed you in Barcelona.");
+            
             }
-            map.setCenter(initialLocation);
+            map.setCenter(geoService.defaultLocation);
 
 
         });
@@ -144,8 +146,8 @@ geoService.getCurrentLocation = function (isOnline,callback) {
         console.log('ko location');
         browserSupportFlag = false;
         popErrorMessage('Lo siento, no consigo encontrar tu localización');
-        initialLocation = barcelona;
-        map.setCenter(initialLocation);
+  
+        map.setCenter(geoService.defaultLocation);
 
     }
 

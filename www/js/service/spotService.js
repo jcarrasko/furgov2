@@ -8,6 +8,8 @@ var spotService = {};
 spotService.db = {};
 spotService.spots = {};
 
+spotService.lastPosition = null;
+
 /*
  * Options
  */
@@ -59,7 +61,7 @@ spotService.openDatabase = function () {
  */
 spotService.createDatabase = function () {
 
-	//remove from here, must go update
+	//TODO remove from here, must go update
 	spotService.db.transaction(function (tx) {
 		tx.executeSql('DROP TABLE SPOTS');
 	});
@@ -68,7 +70,15 @@ spotService.createDatabase = function () {
 	spotService.db.transaction(function (tx) {
 
 
-		tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real,country string, area string, html text,htmlp text,link text,image text,author text,width integer,lenght integer,description text,id_member text, date text,topic_id integer, favourite integer)");
+
+
+		//tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real, cos_latitude real, sin_latitude real, cos_longitude real, sin_longitude real, country string, area string, html text,htmlp text,link text,image text,author text,width integer,lenght integer,description text,id_member text, date text,topic_id integer, favourite integer)");
+
+
+
+		tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real, distance integer, country string, area string, html text,htmlp text,link text,image text,author text,width integer,lenght integer,description text,id_member text, date text,topic_id integer, favourite integer)");
+
+
 
 	}, function (err) {
 		console.log("spotService.Error Creating the database" + err.message);
@@ -92,7 +102,8 @@ spotService.updateDatabaseFromSource = function () {
 
 	$.ajaxSetup({
 		scriptCharset: "utf-8",
-		contentType: "application/json; charset=utf-8"
+		contentType: "application/json; charset=utf-8",
+		async: false
 	});
 
 
@@ -132,6 +143,11 @@ spotService.updateDatabase = function (jsonSpotList, callback) {
 			//console.log( "INSERT INTO SPOTS (id,type, name, latitude, longitude,destomtom) VALUES (" + spot.id + "," + spot.icono + ",'" + spot.nombre    + "'," + spot.lat + "," + spot.lng + ",'" + spot.destomtom + "')");
 
 			// NOTICE that in the json the LAT/Long is mixed !
+			// Pre- Calculate cos-sin for easy distance calculation in realtime
+
+			// Calculates the distance using geoService
+			//distance = geoService.getRelativeDistance(latitude, longitude, spot.longitude, spot.latitude);
+			distance = 0;
 
 			tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude, description) VALUES (?,?,?,?,?,?)", [jsonSpot.id, jsonSpot.icono, jsonSpot.nombre, jsonSpot.lng, jsonSpot.lat, jsonSpot.destomtom]);
 
@@ -153,14 +169,6 @@ spotService.getJsonSource = function () {
 
 	dataSource = spotService.options.offlineUrl;
 
-	// only offline in this design. Needs
-
-	/*if (furgovw.isOnline === true) {
-            dataSource = spotService.options.apiUrl +
-                '?latitude=' + encodeURIComponent(furgovw.userLatitude) +
-                '&longitude=' + encodeURIComponent(furgovw.userLongitude);
-        }*/
-
 	return dataSource;
 };
 
@@ -170,35 +178,70 @@ spotService.getJsonSource = function () {
  * Updates the distance field given a determinate latitude and longitude (must be changed by object location)
  */
 
-spotService.updateSpotDistance = function (spots, latitude, longitude, callback) {
+spotService.updateSpotDistance = function (currentLocation, callback) {
+
+	if (spotService.spots.length > 0) {
+		console.log("a:"+spotService.spots); // ¿? por que no va ¿?
+		spotService.updateSpotDistanceCallback(currentLocation, spotService.spots, callback);
+
+	} else {
+
+		console.log("Updating distance..");
+		var mySpots = [];
+		spotService.db.transaction(function (tx) {
+
+			tx.executeSql('SELECT * FROM SPOTS', [], function (tx, results) {
+				if (results.rows.length > 0) {
+
+
+					for (var i = 0; i < results.rows.length; i++) {
+						mySpots[i]=results.rows.item(i); 
+					}
+
+ 
+					spotService.updateSpotDistanceCallback(currentLocation, mySpots, callback);
+
+
+				}
+				console.log("spotService.The spots returned from loadSpotsFromDatabase:");
+			 
+
+			});
+
+		}, function (err) {
+			console.log("spotService.Error updating the database: " + err.message);
+		});
+	}
+};
+
+/*
+ * Updates the distance field given a determinate latitude and longitude (must be changed by object location)
+ */
+
+spotService.updateSpotDistanceCallback = function (currentLocation, spots, callback) {
 
 	//console.log("Updating distance..");
 
 	spotService.db.transaction(function (tx) {
 
-		var i;
-		for (i in spotList) {
+		$.each(spots, function (index, spot) {
+		 
+			var distance = geoService.getRelativeDistance(currentLocation.latitude, currentLocation.longitude, spot.latitude, spot.longitude);
 
-			var spot = spotList[i];
+			tx.executeSql("UPDATE SPOTS set distance=? WHERE id=?", [distance, spot.id]);
 
-			// Calculates the distance using geoService
-			spot.distance = geoService.getRelativeDistance(latitude, longitude, spot.longitude, spot.latitude);
+		});
+		// callback to the main function
+		spotService.loadNearestSpotsFromDatabase(callback);
 
 
-			//console.log( "INSERT INTO SPOTS (id,type, name, latitude, longitude,destomtom) VALUES (" + spot.id + "," + spot.icono + ",'" + spot.nombre    + "'," + spot.lat + "," + spot.lng + ",'" + spot.destomtom + "')");
-			tx.executeSql("UPDATE TABLE SPOTS (distance) VALUES (?) WHERE id=?", [spot.distance, spot.id]);
 
-		}
-
-		spotService.loadSpotsFromDatabase(callback);
 
 	}, function (err) {
 		console.log("spotService.Error updating the database: " + err.message);
 	});
 
 };
-
-
 
 /*
  * Updates the distance field given a determinate latitude and longitude (must be changed by object location)
@@ -224,7 +267,8 @@ spotService.updateFavourite = function (spot) {
  */
 
 spotService.loadSpotsFromDatabase = function (callback) {
-
+	return;
+	console.log("spotService.loadSpotsFromDatabase.loading spots from database");
 	var spots = [];
 	spotService.db.transaction(function (tx) {
 		tx.executeSql('SELECT * FROM SPOTS ORDER BY name', [], function (tx, results) {
@@ -239,6 +283,7 @@ spotService.loadSpotsFromDatabase = function (callback) {
 			console.log("spotService.The spots returned from loadSpotsFromDatabase:");
 			// callback to the main function
 			callback(spots);
+			 
 
 		});
 
@@ -247,6 +292,7 @@ spotService.loadSpotsFromDatabase = function (callback) {
 	}, function (err) {
 		console.log("spotService.Error loading the database: " + err.message);
 	});
+
 
 
 };
@@ -288,64 +334,18 @@ spotService.loadFavouriteSpotsFromDatabase = function (callback) {
  * Retrieve the spots from database
  */
 
-spotService.loadNearestSpotsFromDatabase = function (callback, currentLocation) {
+spotService.loadNearestSpotsFromDatabase = function (callback) {
 
 	console.log("spotservice.loadNearestSpotsFromDatabase. Starting.");
 
-	var maxKmDistance = 25.0; // This must be given by parameter. Equivalente a 25km
-	
-	// calculate current cos / sin
-	
-	currentCosLatitude = cos(currentLocation.latitude * PI /180);
-	currentSinLatitude = sin(currentLocation.latitude * PI /180);
-	currentCosLongitude = cos(currentLocation.longitude * PI /180);
-	currentSinLongitude = sin(currentLocation.longitude * PI /180);
-	
-	// distancia maxima
-	
-	cosMaxDistance= cos(maxKmDistance / 6371);
-	
-	
-
-	/*Nueva estrategia :
-	
-	- Precalcular al grabar en DB y guardar
-	
-	cos_lat = cos(lat * PI / 180)
-sin_lat = sin(lat * PI / 180)
-cos_lng = cos(lng * PI / 180)
-sin_lng = sin(lng * PI / 180)
-
-	- Precalcular de la current location
-
-	CUR_cos_lat = cos(cur_lat * PI / 180)
-CUR_sin_lat = sin(cur_lat * PI / 180)
-CUR_cos_lng = cos(cur_lng * PI / 180)
-CUR_sin_lng = sin(cur_lng * PI / 180)
-cos_allowed_distance = cos(25.0 / 6371) # equivalente a  25km
-	
-- Lanzar query de este estilo:
-	
-	SELECT * FROM position WHERE CUR_sin_lat * sin_lat + CUR_cos_lat * cos_lat * (cos_lng* CUR_cos_lng + sin_lng * CUR_sin_lng) > cos_allowed_distance;
-	
-	
-	http://stackoverflow.com/questions/3126830/query-to-get-records-based-on-radius-in-sqlite
-	
-	*/
-
-	maxLatitude = currentLocation.latitude + 0.25;
-	minLatitude = currentLocation.latitude - 0.25;
-	maxLongitude = currentLocation.longitude + 0.25;
-	minLongitude = currentLocation.longitude - 0.25;
-
-	console.log(maxLatitude);
-	console.log(minLatitude);
-	console.log(maxLongitude);
-	console.log(minLongitude);
 
 	var spots = [];
 	spotService.db.transaction(function (tx) {
-		tx.executeSql('SELECT * FROM SPOTS WHERE latitude < ? AND latitude > ? AND longitude < ? AND longitude >?', [maxLatitude, minLatitude, maxLongitude, minLongitude], function (tx, results) {
+
+	 
+
+		tx.executeSql('SELECT * FROM SPOTS WHERE distance < 50 ORDER BY distance', [], function (tx, results) {
+			console.log("spotservice.loadNearestSpotsFromDatabase. Results numr." + results.rows.length);
 			if (results.rows.length > 0) {
 				for (var i = 0; i < results.rows.length; i++) {
 					//console.log(results.rows.item(i));
