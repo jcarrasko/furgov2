@@ -6,7 +6,7 @@
 var spotService = {};
 
 spotService.db = {};
-spotService.spots = {};
+spotService.allSpots={};
 
 spotService.lastPosition = null;
 
@@ -118,14 +118,7 @@ spotService.updateDatabaseFromSource = function () {
 		console.log("Error: " + error.message);
 
 	});
-
-
-
-
 };
-
-
-
 
 /*
  * Updates the database with the list gived by the json call
@@ -139,17 +132,8 @@ spotService.updateDatabase = function (jsonSpotList, callback) {
 		var i;
 		for (i in jsonSpotList) {
 			var jsonSpot = jsonSpotList[i];
-			//console.log("Inserting data..");
-			//console.log( "INSERT INTO SPOTS (id,type, name, latitude, longitude,destomtom) VALUES (" + spot.id + "," + spot.icono + ",'" + spot.nombre    + "'," + spot.lat + "," + spot.lng + ",'" + spot.destomtom + "')");
 
-			// NOTICE that in the json the LAT/Long is mixed !
-			// Pre- Calculate cos-sin for easy distance calculation in realtime
-
-			// Calculates the distance using geoService
-			//distance = geoService.getRelativeDistance(latitude, longitude, spot.longitude, spot.latitude);
-			distance = 0;
-
-			tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude, description) VALUES (?,?,?,?,?,?)", [jsonSpot.id, jsonSpot.icono, jsonSpot.nombre, jsonSpot.lng, jsonSpot.lat, jsonSpot.destomtom]);
+			tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude, description,link,author) VALUES (?,?,?,?,?,?,?,?)", [jsonSpot.id, jsonSpot.icono, jsonSpot.nombre, jsonSpot.lng, jsonSpot.lat, jsonSpot.destomtom,jsonSpot.link,jsonSpot.author]);
 
 		}
 
@@ -180,9 +164,9 @@ spotService.getJsonSource = function () {
 
 spotService.updateSpotDistance = function (currentLocation, callback) {
 
-	if (spotService.spots.length > 0) {
-		console.log("a:"+spotService.spots); // ¿? por que no va ¿?
-		spotService.updateSpotDistanceCallback(currentLocation, spotService.spots, callback);
+	if (spotService.allSpots.length > 0) {
+		console.log("a:" + spotService.allSpots); // ¿? por que no va ¿?
+		spotService.updateSpotDistanceCallback(currentLocation, spotService.allSpots, callback);
 
 	} else {
 
@@ -195,16 +179,15 @@ spotService.updateSpotDistance = function (currentLocation, callback) {
 
 
 					for (var i = 0; i < results.rows.length; i++) {
-						mySpots[i]=results.rows.item(i); 
+						mySpots[i] = results.rows.item(i);
 					}
 
- 
+
 					spotService.updateSpotDistanceCallback(currentLocation, mySpots, callback);
 
 
 				}
 				console.log("spotService.The spots returned from loadSpotsFromDatabase:");
-			 
 
 			});
 
@@ -225,7 +208,7 @@ spotService.updateSpotDistanceCallback = function (currentLocation, spots, callb
 	spotService.db.transaction(function (tx) {
 
 		$.each(spots, function (index, spot) {
-		 
+
 			var distance = geoService.getRelativeDistance(currentLocation.latitude, currentLocation.longitude, spot.latitude, spot.longitude);
 
 			tx.executeSql("UPDATE SPOTS set distance=? WHERE id=?", [distance, spot.id]);
@@ -233,9 +216,6 @@ spotService.updateSpotDistanceCallback = function (currentLocation, spots, callb
 		});
 		// callback to the main function
 		spotService.loadNearestSpotsFromDatabase(callback);
-
-
-
 
 	}, function (err) {
 		console.log("spotService.Error updating the database: " + err.message);
@@ -260,16 +240,25 @@ spotService.updateFavourite = function (spot) {
 
 };
 
+/*
+ * Gets all the spots
+ */
+
+spotService.getAllSpots = function () {
+	
+	return spotService.allSpots;
+	
+}
 
 
 /*
  * Retrieve the spots from database
  */
 
-spotService.loadSpotsFromDatabase = function (callback) {
-	return;
+spotService.loadSpotsFromDatabase = function () {
+	
 	console.log("spotService.loadSpotsFromDatabase.loading spots from database");
-	var spots = [];
+	 var spots = [];
 	spotService.db.transaction(function (tx) {
 		tx.executeSql('SELECT * FROM SPOTS ORDER BY name', [], function (tx, results) {
 			if (results.rows.length > 0) {
@@ -282,19 +271,13 @@ spotService.loadSpotsFromDatabase = function (callback) {
 			}
 			console.log("spotService.The spots returned from loadSpotsFromDatabase:");
 			// callback to the main function
-			callback(spots);
-			 
+			spotService.allSpots = spots;
+			//callback(spots);
 
 		});
-
-
-
 	}, function (err) {
 		console.log("spotService.Error loading the database: " + err.message);
 	});
-
-
-
 };
 
 
@@ -321,12 +304,9 @@ spotService.loadFavouriteSpotsFromDatabase = function (callback) {
 
 		});
 
-
-
 	}, function (err) {
 		console.log("spotService.Error loading the database: " + err.message);
 	});
-
 
 };
 
@@ -337,13 +317,10 @@ spotService.loadFavouriteSpotsFromDatabase = function (callback) {
 spotService.loadNearestSpotsFromDatabase = function (callback) {
 
 	console.log("spotservice.loadNearestSpotsFromDatabase. Starting.");
-
-
+	
 	var spots = [];
 	spotService.db.transaction(function (tx) {
-
-	 
-
+		
 		tx.executeSql('SELECT * FROM SPOTS WHERE distance < 50 ORDER BY distance', [], function (tx, results) {
 			console.log("spotservice.loadNearestSpotsFromDatabase. Results numr." + results.rows.length);
 			if (results.rows.length > 0) {
@@ -361,13 +338,9 @@ spotService.loadNearestSpotsFromDatabase = function (callback) {
 
 		});
 
-
-
 	}, function (err) {
 		console.log("spotService.Error loading the database: " + err.message);
 	});
-
-
 };
 
 
@@ -395,13 +368,9 @@ spotService.getCountryList = function (callback) {
 
 		});
 
-
-
 	}, function (err) {
 		console.log("spotService.Error loading the database: " + err.message);
 	});
-
-
 };
 
 /*
@@ -410,6 +379,8 @@ spotService.getCountryList = function (callback) {
 spotService.removeBadTags = function (data) {
 	console.log(data.split(''));
 	data = data.replace(/\[/g, '<');
+	data = data.replace(/\]/g, '>');
+	data = data.replace(/\]/g, '>');
 	data = data.replace(/\]/g, '>');
 	return (data);
 };

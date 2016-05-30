@@ -63,22 +63,31 @@ var map;
 	furgovw.deviceready = function () {
 
 		console.log('FurgoVW.Initializing Device...');
-		// initialize spot service
+		// initialize services
+		geoService.initService();
 		spotService.initService();
+		// add anchors
+		furgovw.addAnchors();
+		// sets the current location
+		furgovw.setCurrentLocation();
 
 
-		/* Load the spots
-		console.log('FurgoVW.Loding DB...');
-		spotService.loadSpotsFromDatabase(furgovw.loadAllSpots);
-		console.log("Furgo spots");
-		console.log(furgovw.spots);*/
+		// TODO need to be reviewed 
+		spotService.loadSpotsFromDatabase();
+		//furgovw.loadMap();
 
-		/* Canviar per un update reload...
-		$('#fvw_logo')
-		    .on('click', function () {
-		        furgovw.main();
-		    });
-		    */
+		//spotService.updateSpotDistance(currentLocation, furgovw.addSpotsToMap);
+
+	};
+
+
+
+
+	/*
+	 * Adds the anchors 
+	 */
+
+	furgovw.addAnchors = function () {
 
 
 		$('#set_current_location') // needed to check
@@ -91,8 +100,8 @@ var map;
 			.on('click', function () {
 				furgovw.updateDatabase();
 			});
-		// Loads the map
 
+		// Loads the map
 		$('#map_page').on('pageshow', function () {
 			furgovw.loadMap();
 		});
@@ -105,27 +114,13 @@ var map;
 
 			//Get user location
 			console.log('Starting to get location...');
-			geoService.getAddress(furgovw.marker.position.lat(), furgovw.marker.position.lng(), furgovw.setLocation);
+			//geoService.getAddress(furgovw.marker.position.lat(), furgovw.marker.position.lng(), furgovw.setLocation);
 
 
 		});
 
-
-		furgovw.main();
-
-
 	};
 
-	/*
-	 * Main fuction ( must be moved to device ready ?)
-	 */
-	furgovw.main = function () {
-
-
-		furgovw.setCurrentLocation();
-
-
-	};
 
 
 	/*
@@ -140,7 +135,7 @@ var map;
 		geoService.getCurrentLocation(connectionService.isOnline(), furgovw.setLocation);
 
 
-	}
+	};
 
 	/*
 	 * Callback function used to set current address via google APIS
@@ -208,12 +203,6 @@ var map;
 		return (data);
 	};
 
-
-
-
-
-
-
 	/* 
 	/ Load all spots from datasource
 	*/
@@ -221,7 +210,7 @@ var map;
 	furgovw.loadAllSpots = function (spots) {
 
 		console.log("furgovw.Loading all the spots gived from db callback");
-		$('#all_spots_list').empty();
+		$('#spots_listview').empty();
 
 		furgovw.spots = spots;
 
@@ -234,22 +223,13 @@ var map;
 
 		//furgovw.spots = spots.slice(100, 110); // temporal for making test
 
-		$.each(furgovw.spots, function (index, spot) {
-
-			// calculate the distance
-			//	spot.distance = geoService.getRelativeDistance(furgovw.userLatitude, furgovw.userLongitude, spot.latitude, spot.longitude);
+		$.each(spots, function (index, spot) {
 
 
-
-			// remove nulls
-
-			if (spot.description === null) {
-				spot.description = "Sin descripción";
-			}
 
 			// Componize the card
 
-			$('#spots_list_list').append('<div class="nd2-card card-media-right card-media-small"><div class="card-media"><img src="data/thumbs/' + spot.id + '.jpg"></div>	<div class="card-title has-supporting-text"><h6 class="card-primary-title">' + spot.name + '</h6><h5 class="card-subtitle">' + '<p>' + parseFloat(spot.distance).toFixed(1) + ' kms</p>' + spot.description + '</h5></div><div class="card-action"><div class="row between-xs"><div class="col-xs-12 align-right"><div class="box"><a onclick="furgovw.toggleFavourite(' + spot.id + ');" href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-favorite"></i></a><a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-bookmark"></i></a><a href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-reply zmd-flip-horizontal"></i></a></div></div></div></div></div>');
+			$('#spots_listview').append(furgovw.getSimpleSpotCard(spot));
 
 
 			$('#spots_list_list')
@@ -258,12 +238,179 @@ var map;
 
 		});
 
+	};
 
-		// needs to check if is online.
-		furgovw.addSpotsToMap();
+
+	/*
+	 * Load map and update poistion
+	 */
+
+	furgovw.getSimpleSpotCard = function (spot) {
+
+		var card = "";
+
+		// remove nulls
+
+		if (spot.description === null) {
+			spot.description = "Sin descripción";
+		}
+
+		var geoUrl = "geo:" + spot.latitude + "," + spot.longitude;
+
+		card = '<div class="nd2-card card-media-right card-media-small">' +
+			'<div class="card-media"><img src="data/thumbs/' + spot.id + '.jpg"></div>' +
+			'<div class="card-title has-supporting-text">' +
+			'<h6 class="card-primary-title">' + spot.name + '</h6>' +
+			'<h5 class="card-subtitle">' + '<p>' + parseFloat(spot.distance).toFixed(1) + ' kms</p>' + spot.description + '</h5>' +
+			'</div>' +
+			'<div class="card-action"><div class="row between-xs"><div class="col-xs-12 align-right"><div class="box">' +
+			'<a onclick="furgovw.toggleFavourite(' + spot.id + ');" href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-favorite"></i></a>' +
+			'<a href="' + spot.link + '&action=printpage" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-reply zmd-flip-horizontal"></i></a>' +
+			'<a href="' + geoUrl + '" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-navigation"></i></a>' +
+			'</div></div></div></div>' +
+			'</div>';
+
+
+		return card;
+
 
 	};
 
+	/*
+	 * Load map and update poistion
+	 */
+
+	furgovw.loadMap = function () {
+
+		console.log("furgovw.loadmap. Initializing map");
+		infowindow = new google.maps.InfoWindow({
+			content: "holding..."
+		});
+
+		if (typeof furgovw.marker == 'undefined') {
+			if (furgovw.userLatitude && furgovw.userLongitude) {
+				latlng =
+					new google.maps.LatLng(furgovw.userLatitude, furgovw.userLongitude);
+			} else {
+				latlng =
+					new google.maps.LatLng("40.41153868", "-3.70362707");
+			}
+
+			var myOptions = {
+				zoom: 10,
+				center: latlng,
+				overviewMapControl: true,
+				zoomControl: true,
+				zoomControlOptions: {
+					style: google.maps.ZoomControlStyle.SMALL,
+					position: google.maps.ControlPosition.LEFT_TOP
+				},
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
+
+
+			console.log("Setting map");
+			map = new google.maps.Map(document.getElementById("map"), myOptions);
+			var mapdiv = document.getElementById("map");
+			mapdiv.style.width = '100%';
+			mapdiv.style.height = '100%';
+			mapdiv.style.padding = '0';
+
+			furgovw.marker = new google.maps.Marker({
+				position: latlng,
+				title: "Centrar aquí"
+			});
+			furgovw.marker.setMap(map);
+
+
+
+			google.maps.event.addListener(map, 'click', function (event) {
+				furgovw.marker.setPosition(event.latLng);
+				console.log("clicked map");
+
+			});
+		}
+
+
+		google.maps.event.addListener(map, 'bounds_changed', function () {
+			if (!map.firstTime) {
+				//furgovw.loadSpotsMap();
+				map.firstTime = true;
+			}
+		});
+
+
+		var spots = spotService.getAllSpots();
+		console.log("los spts");
+		furgovw.addSpotsToMap(spots);
+
+	};
+
+	/*
+	 * Load spots from furgovw API (NOT NEEDED !)
+	 */
+	furgovw.loadSpotsMap = function (spots) {
+		var queryString = this.queryString();
+		console.log(spots);
+		furgovw.addSpotsToMap(spots);
+	};
+
+
+
+	/*
+	 * Load spots from furgovw API
+	 */
+	furgovw.addSpotsToMap_2 = function (spots) {
+
+		console.log("furgovw.addingspotstomap.step1");
+		console.log(spots);
+
+		$.each(spots, function (index, spot) {
+
+			var latlng = new google.maps.LatLng(spot.latitude, spot.longitude);
+
+			var marker = new google.maps.Marker({
+				position: latlng,
+				title: spot.name,
+				id: spot.id,
+				link: spot.link,
+				image: '<img src="data/thumbs/' + spot.id + '.jpg">',
+				icon: '<img src="' + furgovw.icons[0] + '">'
+			});
+			furgovw.markers.push(marker);
+
+			google.maps.event.addListener(marker, 'click', function () {
+
+				var markerHTML =
+					'<div class="furgovwSpot">' +
+					'<h3>' + '<a onclick="furgovw.fillDetailPage(' + this.id + ');" href="#spot-detail' + '">' + this.title + '</a>' +
+					'</h3>' +
+					'<a target="_blank" href="' + this.link + '">' +
+					+this.image +
+					'</a>' +
+					'<br>' +
+					'A&ntilde;adido por AAAA</div>';
+
+				infowindow.setContent(markerHTML);
+				infowindow.open(map, furgovw);
+			});
+		});
+
+		console.log("furgovw.addingspotstomap.step2");
+		var mcOptions = {
+			gridSize: 50,
+			maxZoom: furgovw.options.markerClustererMaxZoom
+		};
+
+
+		console.log("furgovw.addingspotstomap.step3");
+		furgovw.markerClusterer = new MarkerClusterer(map, furgovw.markers, mcOptions);
+
+		$('.loading').hide();
+
+
+
+	};
 
 
 
@@ -338,72 +485,12 @@ var map;
 		});
 	};
 
-	furgovw.loadMap = function () {
-
-		console.log("initmap");
-		infowindow = new google.maps.InfoWindow({
-			content: "holding..."
-		});
-
-		if (typeof furgovw.marker == 'undefined') {
-			if (furgovw.userLatitude && furgovw.userLongitude) {
-				latlng =
-					new google.maps.LatLng(furgovw.userLatitude, furgovw.userLongitude);
-			} else {
-				latlng =
-					new google.maps.LatLng("40.41153868", "-3.70362707");
-			}
-
-			var myOptions = {
-				zoom: 10,
-				center: latlng,
-				overviewMapControl: true,
-				zoomControl: true,
-				zoomControlOptions: {
-					style: google.maps.ZoomControlStyle.SMALL,
-					position: google.maps.ControlPosition.LEFT_TOP
-				},
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			};
-
-
-			console.log("Setting map");
-			map = new google.maps.Map(document.getElementById("map"), myOptions);
-			var mapdiv = document.getElementById("map");
-			mapdiv.style.width = '100%';
-			mapdiv.style.height = '100%';
-			mapdiv.style.padding = '0';
-
-			furgovw.marker = new google.maps.Marker({
-				position: latlng,
-				title: "Centrar aquí"
-			});
-			furgovw.marker.setMap(map);
-
-
-
-			google.maps.event.addListener(map, 'click', function (event) {
-				furgovw.marker.setPosition(event.latLng);
-				console.log("clicked map");
-
-			});
-		}
-
-
-		google.maps.event.addListener(map, 'bounds_changed', function () {
-			if (!map.firstTime) {
-				furgovw.loadSpotsMap();
-				map.firstTime = true;
-			}
-		});
-
-	};
 
 
 	/*
 	 * Load spots from furgovw API
 	 */
-	furgovw.loadSpotsMap = function () {
+	furgovw.loadSpotsMap_borrar = function (spots) {
 		var queryString = this.queryString();
 
 		/*
@@ -427,42 +514,76 @@ var map;
         );
    
     */
-		furgovw.addSpotsToMap();
+		furgovw.addSpotsToMap(spots);
 	};
 
 	/*
 	 * Load spots from furgovw API
 	 */
-	furgovw.addSpotsToMap = function () {
+	furgovw.addSpotsToMap = function (spots) {
 
 		console.log("Spots list");
 		console.log(furgovw.spots);
 
+
+		//furgovw.spots=spots;
+
+
 		for (var x = 0; x < furgovw.spots.length; x++) {
-			var latlng = new google.maps.LatLng(furgovw.spots[x].lng, furgovw.spots[x].lat);
+
+			spot = furgovw.spots[x];
+
+			var latlng = new google.maps.LatLng(furgovw.spots[x].latitude, furgovw.spots[x].longitude);
 
 			var marker = new google.maps.Marker({
 				position: latlng,
-				title: furgovw.spots[x].nombre,
+				title: furgovw.spots[x].name,
 				id: furgovw.spots[x].id,
 				link: furgovw.spots[x].link,
-				imagen: furgovw.spots[x].imagen,
+				imagen: furgovw.spots[x].image,
 				autor: furgovw.spots[x].autor,
-				icon: furgovw.icons[furgovw.spots[x].icono]
+				icon: furgovw.icons[furgovw.spots[x].type]
+
 			});
 			this.markers.push(marker);
 
 			google.maps.event.addListener(marker, 'click', function () {
 
-				var markerHTML =
-					'<div class="furgovwSpot">' +
-					'<h3>' + '<a onclick="furgovw.fillDetailPage(' + this.id + ');" href="#spot-detail' + '">' + this.title + '</a>' +
+
+				// remove nulls
+
+				if (spot.description === null) {
+					spot.description = "Sin descripción";
+				}
+
+				var geoUrl = "geo:" + spot.latitude + "," + spot.longitude;
+
+				var card = '<div class="furgovwSpot">' +
+					'<div class="card-media"><img src="data/thumbs/' + spot.id + '.jpg"></div>' +
+					'<div class="card-title has-supporting-text">' +
+					'<h6 class="card-primary-title">' + '<a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + spot.name + '</a>' + '</h6>' +
+					'<h5 class="card-subtitle">' + '<p>' + parseFloat(spot.distance).toFixed(1) + ' kms</p>' + spot.description + '</h5>' +
+					'</div>' +
+					'<div class="card-action"><div class="row between-xs"><div class="col-xs-12 align-right"><div class="box">' +
+					'<a onclick="furgovw.toggleFavourite(' + spot.id + ');" href="#" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-favorite"></i></a>' +
+					'<a href="' + spot.link + '&action=printpage" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-reply zmd-flip-horizontal"></i></a>' +
+					'<a href="' + geoUrl + '" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-navigation"></i></a>' +
+					'</div></div></div></div>' +
+					'</div>';
+
+				var markerHTML = card;
+				/*'<div class="furgovwSpot">' +
+				'<h3>' + '<a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + spot.name + '</a>' +
 					'</h3>' +
-					'<a target="_blank" href="' + this.link + '">' +
-					'<img src="' + this.imagen + '">' +
+					'<a target="_blank" href="' + spot.link + '">' +
+					'<img src="data/thumbs/' + spot.id + '.jpg">' +
 					'</a>' +
-					'<br>' +
-					'A&ntilde;adido por ' + this.autor;
+					'</div>';*/
+
+
+
+
+
 
 				infowindow.setContent(markerHTML);
 				infowindow.open(map, this);
@@ -471,7 +592,7 @@ var map;
 
 		var mcOptions = {
 			gridSize: 50,
-			maxZoom: this.options.markerClustererMaxZoom
+			maxZoom: furgovw.options.markerClustererMaxZoom
 		};
 		this.markerClusterer = new MarkerClusterer(map, this.markers, mcOptions);
 

@@ -30,13 +30,5 @@
         },
         "is_top_level": true,
         "variables": {}
-    },
-    "cordova-sqlite-legacy": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-sqlite-legacy@0.7.18"
-        },
-        "is_top_level": true,
-        "variables": {}
     }
 }
