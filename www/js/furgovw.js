@@ -95,6 +95,18 @@ var map;
 				furgovw.setCurrentLocation();
 			});
 
+		$('#get_favourites') // needed to check
+			.on('click', function () {
+				furgovw.getFavourites();
+			});
+
+		$('#set_filter') // needed to check
+			.on('click', function () {
+				furgovw.setFilter();
+			});
+
+
+
 
 		$('#show_prefs') // needed to check
 			.on('click', function () {
@@ -122,7 +134,21 @@ var map;
 	};
 
 
+	/*
+	 * Filter
+	 */
 
+	furgovw.setFilter = function () {
+
+
+		var typeFilter = $('#search_typeb').val();
+		var distanceFilter = 100000; //$('#search_distanceb').val();
+
+
+		//geoService.getCurrentLocation(connectionService.isOnline(), furgovw.setLocation);
+		spotService.loadFilteredSpots(distanceFilter, typeFilter, furgovw.loadAllSpots);
+
+	};
 	/*
 	 * Callback function used to set current address via google APIS
 	 */
@@ -136,6 +162,26 @@ var map;
 
 
 	};
+
+	/*
+	 * Calls vaourties
+	 */
+
+	furgovw.getFavourites = function () {
+
+		// sets the current location
+		// depending of the connection
+
+		spotService.loadFavouriteSpotsFromDatabase(furgovw.loadAllSpots);
+
+
+	};
+
+
+
+
+
+
 
 	/*
 	 * Callback function used to set current address via google APIS
@@ -357,63 +403,6 @@ var map;
 
 
 
-	/*
-	 * Load spots from furgovw API
-	 */
-	furgovw.addSpotsToMap_2 = function (spots) {
-
-		console.log("furgovw.addingspotstomap.step1");
-		console.log(spots);
-
-		$.each(spots, function (index, spot) {
-
-			var latlng = new google.maps.LatLng(spot.latitude, spot.longitude);
-
-			var marker = new google.maps.Marker({
-				position: latlng,
-				title: spot.name,
-				id: spot.id,
-				link: spot.link,
-				image: '<img src="data/thumbs/' + spot.id + '.jpg">',
-				icon: '<img src="' + furgovw.icons[0] + '">'
-			});
-			furgovw.markers.push(marker);
-
-			google.maps.event.addListener(marker, 'click', function () {
-
-				var markerHTML =
-					'<div class="furgovwSpot">' +
-					'<h3>' + '<a onclick="furgovw.fillDetailPage(' + this.id + ');" href="#spot-detail' + '">' + this.title + '</a>' +
-					'</h3>' +
-					'<a target="_blank" href="' + this.link + '">' +
-					+this.image +
-					'</a>' +
-					'<br>' +
-					'A&ntilde;adido por AAAA</div>';
-
-				infowindow.setContent(markerHTML);
-				infowindow.open(map, furgovw);
-			});
-		});
-
-		console.log("furgovw.addingspotstomap.step2");
-		var mcOptions = {
-			gridSize: 50,
-			maxZoom: furgovw.options.markerClustererMaxZoom
-		};
-
-
-		console.log("furgovw.addingspotstomap.step3");
-		furgovw.markerClusterer = new MarkerClusterer(map, furgovw.markers, mcOptions);
-
-		$('.loading').hide();
-
-
-
-	};
-
-
-
 
 	/* 
     / Switch Favorite
@@ -422,10 +411,8 @@ var map;
 	furgovw.toggleFavourite = function (id) {
 
 		furgovw.id = id;
-
+		
 		$.each(furgovw.spots, function (index, spot) {
-
-
 			console.log(spot);
 			if (spot.id == furgovw.id) {
 
@@ -435,7 +422,7 @@ var map;
 					spot.favourite = 1;
 				}
 
-				furgovw.updateFavourite(spot);
+				spotService.updateFavourite(spot);
 
 			}
 		});
@@ -572,18 +559,6 @@ var map;
 					'</div>';
 
 				var markerHTML = card;
-				/*'<div class="furgovwSpot">' +
-				'<h3>' + '<a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + spot.name + '</a>' +
-					'</h3>' +
-					'<a target="_blank" href="' + spot.link + '">' +
-					'<img src="data/thumbs/' + spot.id + '.jpg">' +
-					'</a>' +
-					'</div>';*/
-
-
-
-
-
 
 				infowindow.setContent(markerHTML);
 				infowindow.open(map, this);
@@ -592,6 +567,7 @@ var map;
 
 		var mcOptions = {
 			gridSize: 50,
+			imagePath: 'images/m',
 			maxZoom: furgovw.options.markerClustererMaxZoom
 		};
 		this.markerClusterer = new MarkerClusterer(map, this.markers, mcOptions);

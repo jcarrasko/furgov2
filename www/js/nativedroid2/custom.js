@@ -168,4 +168,4 @@ $(function () {
         
         
         
-        $("spots_list_list").filterable( "option", "input", "#list_filter" );
+        $("spots_listview").filterable( "option", "input", "#list_filter" );

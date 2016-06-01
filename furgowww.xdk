@@ -6,7 +6,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "",
       "projectGuid": "a1301560-20c4-4396-bb6c-41e7fa359474",
-      "lastModifiedDate": 1464648923293,
+      "lastModifiedDate": 1464653523666,
       "creationDate": 1440369313409
     },
     "sourceDirectory": "www",
@@ -312,7 +312,10 @@
           "intents": [
             "geo:*"
           ],
-          "navigation": []
+          "navigation": [
+            "geo:*"
+          ],
+          "properties": {}
         },
         "icons_": [
           {
@@ -373,7 +376,7 @@
         "addlPermissions_": "",
         "excludedLibraries_": "",
         "certificateId_": "RkOwA48FTUSdECbnMsv9zw2",
-        "appVersion_": "0.1",
+        "appVersion_": "0.5",
         "appVersionCode_": "1",
         "crosswalkVersion_": "16",
         "cordovaCLIVersion_": "5.4.1",

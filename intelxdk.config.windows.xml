@@ -11,7 +11,6 @@
 <intelxdk:plugin intelxdk:name="Splashscreen" intelxdk:value="cordova-plugin-splashscreen" intelxdk:version="3.2.0" intelxdk:checksum="452a4659" intelxdk:type="file"/>
 <intelxdk:plugin intelxdk:name="Geolocation" intelxdk:value="cordova-plugin-geolocation" intelxdk:version="2.1.0" intelxdk:checksum="aa7be91c" intelxdk:type="file"/>
 <intelxdk:plugin intelxdk:name="Network Information" intelxdk:value="cordova-plugin-network-information" intelxdk:version="1.2.0" intelxdk:checksum="ca19365f" intelxdk:type="file"/>
-<intelxdk:plugin intelxdk:name="Cordova sqlite storage plugin (legacy version)" intelxdk:value="cordova-sqlite-legacy" intelxdk:version="0.7.18" intelxdk:checksum="822152c2" intelxdk:type="file"/>
 <preference name="windows-target-version" value="10.0"/>
 <preference name="windows-phone-target-version" value="10.0"/>
 <!--creationInfo:{"src":"","projectTypeName":"com.intel.xdk.projecttype.jsapp"}--></widget>

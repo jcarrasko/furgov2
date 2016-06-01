@@ -6,7 +6,7 @@
 var spotService = {};
 
 spotService.db = {};
-spotService.allSpots={};
+spotService.allSpots = {};
 
 spotService.lastPosition = null;
 
@@ -25,10 +25,10 @@ spotService.spotType = [
         'furgoperfecto',
         'area AC',
         'via verde',
-        'otros',
+        'otros', // not important
         'camping',
         'centro comercial',
-        'otros'
+        'otros' // few spots, no criteria
     ];
 
 
@@ -133,7 +133,7 @@ spotService.updateDatabase = function (jsonSpotList, callback) {
 		for (i in jsonSpotList) {
 			var jsonSpot = jsonSpotList[i];
 
-			tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude, description,link,author) VALUES (?,?,?,?,?,?,?,?)", [jsonSpot.id, jsonSpot.icono, jsonSpot.nombre, jsonSpot.lng, jsonSpot.lat, jsonSpot.destomtom,jsonSpot.link,jsonSpot.author]);
+			tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude, description,link,author) VALUES (?,?,?,?,?,?,?,?)", [jsonSpot.id, jsonSpot.icono, jsonSpot.nombre, jsonSpot.lng, jsonSpot.lat, jsonSpot.destomtom, jsonSpot.link, jsonSpot.author]);
 
 		}
 
@@ -165,7 +165,7 @@ spotService.getJsonSource = function () {
 spotService.updateSpotDistance = function (currentLocation, callback) {
 
 	if (spotService.allSpots.length > 0) {
-		console.log("a:" + spotService.allSpots); // ¿? por que no va ¿?
+		//console.log("a:" + spotService.allSpots); // ¿? por que no va ¿?
 		spotService.updateSpotDistanceCallback(currentLocation, spotService.allSpots, callback);
 
 	} else {
@@ -187,7 +187,7 @@ spotService.updateSpotDistance = function (currentLocation, callback) {
 
 
 				}
-				console.log("spotService.The spots returned from loadSpotsFromDatabase:");
+
 
 			});
 
@@ -231,7 +231,7 @@ spotService.updateFavourite = function (spot) {
 
 	spotService.db.transaction(function (tx) {
 
-		tx.executeSql("UPDATE TABLE SPOTS (favourite) VALUES (?) WHERE id=(?)", [spot.favourite, spot.id]);
+		tx.executeSql("UPDATE SPOTS set favourite=? WHERE id=?", [spot.favourite, spot.id]);
 
 
 	}, function (err) {
@@ -245,20 +245,20 @@ spotService.updateFavourite = function (spot) {
  */
 
 spotService.getAllSpots = function () {
-	
+
 	return spotService.allSpots;
-	
-}
+
+};
 
 
 /*
  * Retrieve the spots from database
  */
 
-spotService.loadSpotsFromDatabase = function () {
-	
+spotService.loadSpotsFromDatabase = function (callback) {
+
 	console.log("spotService.loadSpotsFromDatabase.loading spots from database");
-	 var spots = [];
+	var spots = [];
 	spotService.db.transaction(function (tx) {
 		tx.executeSql('SELECT * FROM SPOTS ORDER BY name', [], function (tx, results) {
 			if (results.rows.length > 0) {
@@ -269,10 +269,10 @@ spotService.loadSpotsFromDatabase = function () {
 					spots[i] = results.rows.item(i);
 				}
 			}
-			console.log("spotService.The spots returned from loadSpotsFromDatabase:");
+
 			// callback to the main function
 			spotService.allSpots = spots;
-			//callback(spots);
+			callback(spots);
 
 		});
 	}, function (err) {
@@ -317,10 +317,13 @@ spotService.loadFavouriteSpotsFromDatabase = function (callback) {
 spotService.loadNearestSpotsFromDatabase = function (callback) {
 
 	console.log("spotservice.loadNearestSpotsFromDatabase. Starting.");
+
+	spotService.loadFilteredSpotsByMaxDistance (50,callback);
+	/*
 	
 	var spots = [];
 	spotService.db.transaction(function (tx) {
-		
+
 		tx.executeSql('SELECT * FROM SPOTS WHERE distance < 50 ORDER BY distance', [], function (tx, results) {
 			console.log("spotservice.loadNearestSpotsFromDatabase. Results numr." + results.rows.length);
 			if (results.rows.length > 0) {
@@ -340,20 +343,37 @@ spotService.loadNearestSpotsFromDatabase = function (callback) {
 
 	}, function (err) {
 		console.log("spotService.Error loading the database: " + err.message);
-	});
+	});*/
 };
 
 
 
 /*
- * Retrieve the spots from database
+ * Load by filter * All Filters *
  */
 
-spotService.getCountryList = function (callback) {
+spotService.loadFilteredSpots = function (maxDistance, spotType, callback) {
+
+	console.log("spotservice.loadingFilteredSpots. Starting.");
+
+
+	// If there's no filter
+	if (maxDistance == 0 && spotType == 100) { 
+
+		callback(spotService.getAllSpots(callback));
+		return;
+	}
+
 
 	var spots = [];
+
+	
+	
+	
 	spotService.db.transaction(function (tx) {
-		tx.executeSql('SELECT * FROM SPOTS ORDER BY name', [], function (tx, results) {
+
+		tx.executeSql('SELECT * FROM SPOTS WHERE distance < ? and type = ? ORDER BY distance', [maxDistance, spotType], function (tx, results) {
+			console.log("spotservice.loadNearestSpotsFromDatabase. Results numr." + results.rows.length);
 			if (results.rows.length > 0) {
 				for (var i = 0; i < results.rows.length; i++) {
 					//console.log(results.rows.item(i));
@@ -362,7 +382,8 @@ spotService.getCountryList = function (callback) {
 					spots[i] = results.rows.item(i);
 				}
 			}
-			console.log("spotService.The spots returned from loadSpotsFromDatabase:");
+			console.log("spotservice.loadNearestSpotsFromDatabase. Results.");
+			console.log(spots);
 			// callback to the main function
 			callback(spots);
 
@@ -371,10 +392,39 @@ spotService.getCountryList = function (callback) {
 	}, function (err) {
 		console.log("spotService.Error loading the database: " + err.message);
 	});
+
 };
 
+
 /*
- * Remove bad tats
+ * Load by filter by Max Distance
+ */
+
+spotService.loadFilteredSpotsByMaxDistance = function (maxDistance, callback) {
+
+	console.log("spotservice.loadingFilteredSpots By distance. Starting.");
+ 
+	var spots = [];
+	spotService.db.transaction(function (tx) {
+		tx.executeSql('SELECT * FROM SPOTS WHERE distance < ?  ORDER BY distance', [maxDistance], function (tx, results) {
+			// fill the spots array
+			if (results.rows.length > 0) {
+				for (var i = 0; i < results.rows.length; i++) {
+					spots[i] = results.rows.item(i);
+				}
+			}
+			// callback to the main function
+			callback(spots);
+		});
+	}, function (err) {
+		console.log("spotService.Error loading the database: " + err.message);
+	});
+};
+
+
+
+/*
+ * Remove bad tags
  */
 spotService.removeBadTags = function (data) {
 	console.log(data.split(''));

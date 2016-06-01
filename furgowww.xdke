@@ -11,8 +11,6 @@
     "currentEditorMode": 0
   },
   "build-tab": {
-    "selectedTargets": [
-      "CORDOVA_ANDROID"
-    ]
+    "selectedTargets": []
   }
 }

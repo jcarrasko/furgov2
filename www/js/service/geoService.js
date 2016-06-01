@@ -29,7 +29,11 @@ geoService.geocoder = "";
 geoService.initService = function () {
 
 	console.log("geoService::initializing geoService");
-	geoService.geocoder = new google.maps.Geocoder(); // TODO the google script must be downloaded for offline use
+	
+	// TODO IT is needed to fix the geocoder when is offine
+	if(connectionService.isOnline()){
+		geoService.geocoder = new google.maps.Geocoder();
+	}
 
 };
 
