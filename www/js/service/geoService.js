@@ -30,10 +30,11 @@ geoService.initService = function () {
 
 	console.log("geoService::initializing geoService");
 	
-	// TODO IT is needed to fix the geocoder when is offine
-	if(connectionService.isOnline()){
-		geoService.geocoder = new google.maps.Geocoder();
-	}
+ 
+		
+	//geoService.geocoder = new google.maps.Geocoder();
+			
+ 
 
 };
 
@@ -42,11 +43,29 @@ geoService.initService = function () {
  */
 
 geoService.getAddress = function (latitude, longitude, is_online, callback) {
-
+	
 	// generate default myLocation.
 	var myLocation = new Location(latitude, longitude, null, null, null, null);
 	// set current geoservice
 	geoService.currentLocation = myLocation;
+	
+	// try to get the geocoder
+	if (geoService.geocoder ==""){
+		try{
+			geoService.geocoder = new google.maps.Geocoder();			
+		}catch(err){
+			
+		console.log('error getting the geocoder event is is_online is on' + err);
+		// callback with the default location
+		callback(myLocation);
+		return;
+		}
+		
+	}
+	
+	
+	
+
 
 	console.log('is online:' + is_online);
 

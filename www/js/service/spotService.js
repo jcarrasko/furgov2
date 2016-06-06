@@ -7,7 +7,6 @@ var spotService = {};
 
 spotService.db = {};
 spotService.allSpots = {};
-
 spotService.lastPosition = null;
 
 /*
@@ -41,9 +40,31 @@ spotService.initService = function () {
 	// Database Stuff
 	spotService.db = spotService.openDatabase();
 
-	spotService.createDatabase();
 
-	spotService.updateDatabaseFromSource(); // TODO , check if is created already
+
+	var spots = [];
+	spotService.db.transaction(function (tx) {
+		tx.executeSql('SELECT * FROM SPOTS ORDER BY name', [], function (tx, results) {
+			if (results.rows.length > 0) {
+				for (var i = 0; i < results.rows.length; i++) {
+					id = results.rows.item(i)['id'];
+					spots[i] = results.rows.item(i);
+				}
+			}
+
+			// callback to the main function
+			spotService.allSpots = spots;
+
+		});
+	}, function (err) {
+
+
+		spotService.createDatabase();
+		spotService.updateDatabaseFromSource();
+	});
+
+
+
 };
 /*
  *Open the database
@@ -56,27 +77,36 @@ spotService.openDatabase = function () {
 
 };
 
+
+/*
+ * Drop database ( if there's any schema change)
+ */
+spotService.dropDatabase = function () {
+
+
+	spotService.db.transaction(function (tx) {
+		tx.executeSql('DROP TABLE SPOTS');
+	});
+
+};
+
 /*
  *Create the database
  */
 spotService.createDatabase = function () {
 
-	//TODO remove from here, must go update
+	/*TODO remove from here, must go update
 	spotService.db.transaction(function (tx) {
 		tx.executeSql('DROP TABLE SPOTS');
-	});
+	});*/
 
 	// Creates the Database if no Exist
 	spotService.db.transaction(function (tx) {
 
 
+		//tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real, distance integer, country string, area string, html text,htmlp text,link text,image text,author text,width integer,lenght integer,description text,id_member text, date text,topic_id integer, favourite integer)");
 
-
-		//tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real, cos_latitude real, sin_latitude real, cos_longitude real, sin_longitude real, country string, area string, html text,htmlp text,link text,image text,author text,width integer,lenght integer,description text,id_member text, date text,topic_id integer, favourite integer)");
-
-
-
-		tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real, distance integer, country string, area string, html text,htmlp text,link text,image text,author text,width integer,lenght integer,description text,id_member text, date text,topic_id integer, favourite integer)");
+		tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real, distance integer, link text,image text,author text,description text, favourite integer)");
 
 
 
@@ -109,7 +139,7 @@ spotService.updateDatabaseFromSource = function () {
 
 	$.getJSON(mapApiUrl, function (spots) {
 
-		spotService.updateDatabase(spots, furgovw.loadAllSpots);
+		spotService.updateDatabase(spots, null);
 
 	}, function (error) {
 
@@ -133,7 +163,12 @@ spotService.updateDatabase = function (jsonSpotList, callback) {
 		for (i in jsonSpotList) {
 			var jsonSpot = jsonSpotList[i];
 
-			tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude, description,link,author) VALUES (?,?,?,?,?,?,?,?)", [jsonSpot.id, jsonSpot.icono, jsonSpot.nombre, jsonSpot.lng, jsonSpot.lat, jsonSpot.destomtom, jsonSpot.link, jsonSpot.author]);
+			var description = jsonSpot.destomtom;
+			if (description === null) {
+				description = "Sin descripción";
+			}
+
+			tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude, description,link,author,favourite) VALUES (?,?,?,?,?,?,?,?,?)", [jsonSpot.id, jsonSpot.icono, jsonSpot.nombre, jsonSpot.lng, jsonSpot.lat, description, jsonSpot.link, jsonSpot.author, 0]);
 
 		}
 
@@ -165,7 +200,6 @@ spotService.getJsonSource = function () {
 spotService.updateSpotDistance = function (currentLocation, callback) {
 
 	if (spotService.allSpots.length > 0) {
-		//console.log("a:" + spotService.allSpots); // ¿? por que no va ¿?
 		spotService.updateSpotDistanceCallback(currentLocation, spotService.allSpots, callback);
 
 	} else {
@@ -176,19 +210,11 @@ spotService.updateSpotDistance = function (currentLocation, callback) {
 
 			tx.executeSql('SELECT * FROM SPOTS', [], function (tx, results) {
 				if (results.rows.length > 0) {
-
-
 					for (var i = 0; i < results.rows.length; i++) {
 						mySpots[i] = results.rows.item(i);
 					}
-
-
 					spotService.updateSpotDistanceCallback(currentLocation, mySpots, callback);
-
-
 				}
-
-
 			});
 
 		}, function (err) {
@@ -227,11 +253,29 @@ spotService.updateSpotDistanceCallback = function (currentLocation, spots, callb
  * Updates the distance field given a determinate latitude and longitude (must be changed by object location)
  */
 
-spotService.updateFavourite = function (spot) {
+spotService.updateFavourite = function (id) {
+
+
+	var favourite = 0;
+	$.each(spotService.allSpots, function (index, spot) {
+
+		if (spot.id == id) {
+
+			if (spot.favourite == 0) {
+				favourite = 1;
+			} else {
+				favourite = 0;
+			}
+
+			 
+			return false;
+		}
+	});
+
 
 	spotService.db.transaction(function (tx) {
 
-		tx.executeSql("UPDATE SPOTS set favourite=? WHERE id=?", [spot.favourite, spot.id]);
+		tx.executeSql("UPDATE SPOTS set favourite=? WHERE id=?", [favourite, id]);
 
 
 	}, function (err) {
@@ -317,33 +361,8 @@ spotService.loadFavouriteSpotsFromDatabase = function (callback) {
 spotService.loadNearestSpotsFromDatabase = function (callback) {
 
 	console.log("spotservice.loadNearestSpotsFromDatabase. Starting.");
+	spotService.loadFilteredSpotsByMaxDistance(50, callback);
 
-	spotService.loadFilteredSpotsByMaxDistance (50,callback);
-	/*
-	
-	var spots = [];
-	spotService.db.transaction(function (tx) {
-
-		tx.executeSql('SELECT * FROM SPOTS WHERE distance < 50 ORDER BY distance', [], function (tx, results) {
-			console.log("spotservice.loadNearestSpotsFromDatabase. Results numr." + results.rows.length);
-			if (results.rows.length > 0) {
-				for (var i = 0; i < results.rows.length; i++) {
-					//console.log(results.rows.item(i));
-					id = results.rows.item(i)['id'];
-					//console.log(id);
-					spots[i] = results.rows.item(i);
-				}
-			}
-			console.log("spotservice.loadNearestSpotsFromDatabase. Results.");
-			console.log(spots);
-			// callback to the main function
-			callback(spots);
-
-		});
-
-	}, function (err) {
-		console.log("spotService.Error loading the database: " + err.message);
-	});*/
 };
 
 
@@ -358,35 +377,39 @@ spotService.loadFilteredSpots = function (maxDistance, spotType, callback) {
 
 
 	// If there's no filter
-	if (maxDistance == 0 && spotType == 100) { 
+	if (maxDistance == 0 && spotType == 100) {
 
-		callback(spotService.getAllSpots(callback));
-		return;
+		spotService.getAllSpots(callback);
+		return false;
+	}
+
+	if (maxDistance > 0 && spotType == 100) {
+
+		spotService.loadFilteredSpotsByMaxDistance(maxDistance, callback);
+		return false;
+
+	}
+
+
+	if (maxDistance == 0 && spotType != 100) {
+
+		maxDistance = 100000; //unlimited
 	}
 
 
 	var spots = [];
 
-	
-	
-	
 	spotService.db.transaction(function (tx) {
 
 		tx.executeSql('SELECT * FROM SPOTS WHERE distance < ? and type = ? ORDER BY distance', [maxDistance, spotType], function (tx, results) {
-			console.log("spotservice.loadNearestSpotsFromDatabase. Results numr." + results.rows.length);
+
 			if (results.rows.length > 0) {
 				for (var i = 0; i < results.rows.length; i++) {
-					//console.log(results.rows.item(i));
 					id = results.rows.item(i)['id'];
-					//console.log(id);
 					spots[i] = results.rows.item(i);
 				}
 			}
-			console.log("spotservice.loadNearestSpotsFromDatabase. Results.");
-			console.log(spots);
-			// callback to the main function
 			callback(spots);
-
 		});
 
 	}, function (err) {
@@ -403,7 +426,7 @@ spotService.loadFilteredSpots = function (maxDistance, spotType, callback) {
 spotService.loadFilteredSpotsByMaxDistance = function (maxDistance, callback) {
 
 	console.log("spotservice.loadingFilteredSpots By distance. Starting.");
- 
+
 	var spots = [];
 	spotService.db.transaction(function (tx) {
 		tx.executeSql('SELECT * FROM SPOTS WHERE distance < ?  ORDER BY distance', [maxDistance], function (tx, results) {
@@ -427,7 +450,7 @@ spotService.loadFilteredSpotsByMaxDistance = function (maxDistance, callback) {
  * Remove bad tags
  */
 spotService.removeBadTags = function (data) {
-	console.log(data.split(''));
+	 
 	data = data.replace(/\[/g, '<');
 	data = data.replace(/\]/g, '>');
 	data = data.replace(/\]/g, '>');

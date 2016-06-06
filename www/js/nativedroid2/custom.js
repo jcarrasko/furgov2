@@ -40,8 +40,9 @@ $(function () {
                 };
 
                 _self.getSearchInput = function () {
+					return $("#list_filter");
 
-                    return "<input id='list_filter' type='text' class='nd2-search-input' value='' placeholder='" + _self.options.placeholder + "' />";
+					// return "<input id='list_filter' type='text' class='nd2-search-input' value='' placeholder='" + _self.options.placeholder + "' />";
                 };
 
                 _self.activateSearch = function () {

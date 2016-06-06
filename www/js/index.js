@@ -1,4 +1,4 @@
-//furgovw must be included here or in separate
+//furgovw must be included here as a common app
 var app = {
     initialize: function() {
         console.log('initialize');
