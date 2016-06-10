@@ -12,6 +12,15 @@ var map;
 	furgovw.isGeoPositionated = false;
 	furgovw.spots = [];
 
+
+	furgovw.MODE_INIT = "Inicializando";
+	furgovw.MODE_FAV = "Favoritos";
+	furgovw.MODE_MAP = "Mapa";
+	furgovw.MODE_NEAR = "Proximas";
+	furgovw.MODE_CUSTOM = "Custom";
+
+	furgovw.mode = furgovw.MODE_INIT;
+
 	/*
 	 * Icons
 	 */
@@ -95,7 +104,7 @@ var map;
 				furgovw.setFilter();
 			});
 
-	  
+
 		$('#show_prefs') // needed to check
 			.on('click', function () {
 				furgovw.updateDatabase();
@@ -146,19 +155,21 @@ var map;
 		// sets the current location
 		// depending of the connection
 		console.log("Setting current Location");
+		furgovw.mode = furgovw.MODE_NEAR;
 		geoService.getCurrentLocation(connectionService.isOnline(), furgovw.setLocation);
 
 
 	};
 
 	/*
-	 * Calls vaourties
+	 * Show favourites
 	 */
 
 	furgovw.getFavourites = function () {
 
 		// sets the current location
 		// depending of the connection
+		furgovw.mode = furgovw.MODE_FAV;
 
 		spotService.loadFavouriteSpotsFromDatabase(furgovw.loadAllSpots);
 
@@ -255,8 +266,7 @@ var map;
 			return;
 		}
 
-		//furgovw.spots = spots.slice(100, 110); // temporal for making test
-
+	 
 		$.each(spots, function (index, spot) {
 
 
@@ -393,9 +403,15 @@ var map;
 
 		var anchorid = "#anchor" + id;
 		$(anchorid).toggleClass("clr-btn-accent-red");
+		
+		if(furgovw.mode==furgovw.MODE_FAV){
+			spotService.updateFavourite(id,furgovw.getFavourites);
+		}else{
+		
+		spotService.updateFavourite(id,null);
 
-		spotService.updateFavourite(id);
-
+		}
+			
 
 	};
 

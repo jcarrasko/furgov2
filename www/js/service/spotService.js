@@ -253,7 +253,7 @@ spotService.updateSpotDistanceCallback = function (currentLocation, spots, callb
  * Updates the distance field given a determinate latitude and longitude (must be changed by object location)
  */
 
-spotService.updateFavourite = function (id) {
+spotService.updateFavourite = function (id, callback) {
 
 
 	var favourite = 0;
@@ -266,9 +266,10 @@ spotService.updateFavourite = function (id) {
 			} else {
 				favourite = 0;
 			}
-
-			 
-			return false;
+ 
+			if (callback !== null) {
+				callback();
+			}
 		}
 	});
 
@@ -450,7 +451,7 @@ spotService.loadFilteredSpotsByMaxDistance = function (maxDistance, callback) {
  * Remove bad tags
  */
 spotService.removeBadTags = function (data) {
-	 
+
 	data = data.replace(/\[/g, '<');
 	data = data.replace(/\]/g, '>');
 	data = data.replace(/\]/g, '>');

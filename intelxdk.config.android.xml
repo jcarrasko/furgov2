@@ -11,14 +11,12 @@
 <access origin="*"/>
 <allow-intent href="geo:*"/>
 <allow-navigation href="geo:*"/>
-<icon platform="android" src="res/drawable-ldpi/ic_launcher.png" density="ldpi" width="36" height="36"/>
-<icon platform="android" src="res/drawable-mdpi/ic_launcher.png" density="mdpi" width="48" height="48"/>
-<icon platform="android" src="res/drawable-hdpi/ic_launcher.png" density="hdpi" width="72" height="72"/>
-<icon platform="android" src="res/drawable-xhdpi/ic_launcher.png" density="xhdpi" width="96" height="96"/>
-<splash platform="android" src="res/drawable-ldpi/screen.png" density="ldpi" width="320" height="426" orientation="portrait"/>
-<splash platform="android" src="res/drawable-mdpi/screen.png" density="mdpi" width="320" height="470" orientation="portrait"/>
-<splash platform="android" src="res/drawable-hdpi/screen.png" density="hdpi" width="480" height="640" orientation="portrait"/>
-<splash platform="android" src="res/drawable-xhdpi/screen.png" density="xhdpi" width="720" height="960" orientation="portrait"/>
+<icon platform="android" src="res/mipmap-hdpi/ic_launcher.png" density="hdpi" width="72" height="72"/>
+<icon platform="android" src="res/mipmap-xhdpi/ic_launcher.png" density="xhdpi" width="96" height="96"/>
+<icon platform="android" src="res/mipmap-mdpi/ic_launcher.png" density="mdpi" width="48" height="48"/>
+<splash platform="android" src="res/drawable-xxhdpi/screen.9.png" density="hdpi" width="480" height="640" orientation="portrait"/>
+<splash platform="android" src="res/drawable-xhdpi/screen.9.png" density="ldpi" width="320" height="426" orientation="portrait"/>
+<splash platform="android" src="res/drawable-xxxhdpi/screen.9.png" density="xhdpi" width="720" height="960" orientation="portrait"/>
 <intelxdk:plugin intelxdk:name="Device" intelxdk:value="cordova-plugin-device" intelxdk:version="1.1.1" intelxdk:checksum="927290ca" intelxdk:type="file"/>
 <intelxdk:plugin intelxdk:name="Splashscreen" intelxdk:value="cordova-plugin-splashscreen" intelxdk:version="3.2.0" intelxdk:checksum="452a4659" intelxdk:type="file"/>
 <intelxdk:plugin intelxdk:name="Geolocation" intelxdk:value="cordova-plugin-geolocation" intelxdk:version="2.1.0" intelxdk:checksum="aa7be91c" intelxdk:type="file"/>
