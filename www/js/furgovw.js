@@ -266,7 +266,7 @@ var map;
 			return;
 		}
 
-	 
+
 		$.each(spots, function (index, spot) {
 
 
@@ -403,15 +403,15 @@ var map;
 
 		var anchorid = "#anchor" + id;
 		$(anchorid).toggleClass("clr-btn-accent-red");
-		
-		if(furgovw.mode==furgovw.MODE_FAV){
-			spotService.updateFavourite(id,furgovw.getFavourites);
-		}else{
-		
-		spotService.updateFavourite(id,null);
+
+		if (furgovw.mode == furgovw.MODE_FAV) {
+			spotService.updateFavourite(id, furgovw.getFavourites);
+		} else {
+
+			spotService.updateFavourite(id, null);
 
 		}
-			
+
 
 	};
 
@@ -431,10 +431,15 @@ var map;
 
 			var marker = new google.maps.Marker({
 				position: latlng,
-				title: furgovw.spots[x].name,
+				latitude: furgovw.spots[x].latitude,
+				longitude: furgovw.spots[x].longitude,
+				distance: furgovw.spots[x].distance,
+				description: furgovw.spots[x].description,
+				favourite: furgovw.spots[x].favourite,
+				name: furgovw.spots[x].name,
 				id: furgovw.spots[x].id,
 				link: furgovw.spots[x].link,
-				imagen: furgovw.spots[x].image,
+				image: furgovw.spots[x].image,
 				autor: furgovw.spots[x].autor,
 				icon: furgovw.icons[furgovw.spots[x].type]
 
@@ -443,31 +448,32 @@ var map;
 
 			google.maps.event.addListener(marker, 'click', function () {
 
-
-				// remove nulls --->>>>> OJO es una subfunccion
-
-				if (spot.description === null) {
-					spot.description = "Sin descripción";
+				if (this.description === null) {
+					this.description = "Sin descripción";
 				}
 
-				var geoUrl = "geo:" + spot.latitude + "," + spot.longitude;
+				var accent = "";
+				if (this.favourite == 1) {
+					accent = "clr-btn-accent-red";
+				}
+
+				var geoUrl = "geo:" + this.latitude + "," + this.longitude;
 
 				var card = '<div class="furgovwSpot">' +
-					'<div class="card-media"><img src="data/thumbs/' + spot.id + '.jpg"></div>' +
+					'<div class="card-media"><img src="data/thumbs/' + this.id + '.jpg"></div>' +
 					'<div class="card-title has-supporting-text">' +
-					'<h6 class="card-primary-title">' + '<a onclick="furgovw.fillDetailPage(' + spot.id + ');" href="#spot-detail' + '">' + spot.name + '</a>' + '</h6>' +
-					'<h5 class="card-subtitle">' + '<p>' + parseFloat(spot.distance).toFixed(1) + ' kms</p>' + spot.description + '</h5>' +
+					'<h6 class="card-primary-title"><strong>' + this.name + '</strong></h6>' +
+					'<h5 class="card-subtitle">' + '<p>' + parseFloat(this.distance).toFixed(1) + ' kms</p>' + this.description + '</h5>' +
 					'</div>' +
 					'<div class="card-action"><div class="row between-xs"><div class="col-xs-12 align-right"><div class="box">' +
-					'<a onclick="furgovw.toggleFavourite(' + spot.id + ');" href="#" class="ui-btn ui-btn-inline ui-btn-fab  waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-favorite"></i></a>' +
-					'<a href="' + spot.link + '&action=printpage" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-reply zmd-flip-horizontal"></i></a>' +
+					'<a id="anchor' + this.id + '"onclick="furgovw.toggleFavourite(' + this.id + ');" href="#" class="ui-btn ui-btn-inline ui-btn-fab ' + accent + ' waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-favorite"></i></a>' +
+					'<a href="' + this.link + '&action=printpage" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-reply zmd-flip-horizontal"></i></a>' +
 					'<a href="' + geoUrl + '" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-navigation"></i></a>' +
 					'</div></div></div></div>' +
 					'</div>';
 
-				var markerHTML = card;
 
-				infowindow.setContent(markerHTML);
+				infowindow.setContent(card);
 				infowindow.open(map, this);
 			});
 		}
