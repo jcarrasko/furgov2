@@ -85,8 +85,16 @@ var map;
 	 * Function called for init the device
 	 */
 
-	furgovw.setMode = function (mode) {
+	furgovw.setMode = function () {
 
+		/*	$('#set_current_location').removeClass("clr-btn-accent-indigo");
+			$('#get_favourites').removeClass("clr-btn-accent-indigo");
+		 
+			if(furgovw.mode===furgovw.MODE_FAV){
+				$('#get_favourites').addClass("clr-btn-accent-indigo");
+			}else{
+				$('#set_current_location').addClass("clr-btn-accent-indigo");
+			}*/
 
 
 	};
@@ -172,7 +180,7 @@ var map;
 		var typeFilter = $('#search_typeb').val();
 		var distanceFilter = $('#search_distanceb').val();
 		furgovw.mode = furgovw.MODE_FILTER;
-
+		furgovw.setMode();
 		spotService.loadFilteredSpots(distanceFilter, typeFilter, furgovw.loadAllSpots);
 
 	};
@@ -186,6 +194,7 @@ var map;
 		// depending of the connection
 		console.log("Setting current Location");
 		furgovw.mode = furgovw.MODE_NEAR;
+		furgovw.setMode();
 		geoService.getCurrentLocation(connectionService.isOnline(), furgovw.setLocation);
 
 
@@ -200,7 +209,7 @@ var map;
 		// sets the current location
 		// depending of the connection
 		furgovw.mode = furgovw.MODE_FAV;
-
+		furgovw.setMode();
 		spotService.loadFavouriteSpotsFromDatabase(furgovw.loadAllSpots);
 
 
@@ -248,6 +257,12 @@ var map;
 
 
 		map.setCenter(furgovw.latLng);
+		furgovw.marker.setMap(null);
+		furgovw.marker = new google.maps.Marker({
+			position: furgovw.latLng,
+			title: "Tu posicion"
+		});
+		furgovw.marker.setMap(map);
 
 
 	};
@@ -294,7 +309,15 @@ var map;
 
 		if (spots.length === 0) {
 
-			$('#spots_listview').append("No hay resultados, prueba con proximas o cambiando el filtro.");
+			
+			if(furgovw.mode==furgovw.MODE_FAV){
+				$('#spots_listview').append("No tienes favoritos.");
+			}else{
+				$('#spots_listview').append("No se han encontrado resultados próximos con el criterio actual. Prueba cambiando los filtros.");
+			}
+			
+			
+			
 			console.log("No Spots in the spots list"); // TODO  what to do ?
 			return;
 		}
@@ -450,11 +473,26 @@ var map;
 		if (furgovw.mode == furgovw.MODE_FAV) {
 			spotService.updateFavourite(id, furgovw.getFavourites);
 		} else {
-			spotService.updateFavourite(id,function () {}) ;
+			spotService.updateFavourite(id, function () {});
 		}
 
 
-	};						
+	};
+	
+	
+		furgovw.toggleFavouriteMap = function (id, object) {
+
+		var anchorid = "#anchor_map" + id;
+		$(anchorid).toggleClass("clr-btn-accent-red");
+
+		if (furgovw.mode == furgovw.MODE_FAV) {
+			spotService.updateFavourite(id, furgovw.getFavourites);
+		} else {
+			spotService.updateFavourite(id, function () {});
+		}
+
+
+	};
 
 	/*
 	 * Load spots from furgovw API
@@ -506,7 +544,7 @@ var map;
 					'<h5 class="card-subtitle">' + '<p>' + parseFloat(this.distance).toFixed(1) + ' kms</p>' + this.description + '</h5>' +
 					'</div>' +
 					'<div class="card-action"><div class="row between-xs"><div class="col-xs-12 align-right"><div class="box">' +
-					'<a id="anchor' + this.id + '"onclick="furgovw.toggleFavourite(' + this.id + ');" href="#" class="ui-btn ui-btn-inline ui-btn-fab ' + accent + ' waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-favorite"></i></a>' +
+					'<a id="anchor_map' + this.id + '" onclick="furgovw.toggleFavouriteMap(' + this.id + ');" href="#" class="ui-btn ui-btn-inline ui-btn-fab ' + accent + ' waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-favorite"></i></a>' +
 					'<a href="' + this.link + '&action=printpage" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-mail-reply zmd-flip-horizontal"></i></a>' +
 					'<a href="' + geoUrl + '" class="ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-navigation"></i></a>' +
 					'</div></div></div></div>' +
