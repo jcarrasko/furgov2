@@ -199,7 +199,7 @@
 		<!--content-->
 		<div data-role="content">
 			<div>
-				<a href="#map_page" class="ui-btn ui-mini ui-btn-inline waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-my-location" >&nbsp;</i><i id="fvw_user_location_input"> Barcelona, Catalunya</i></a>
+				<a href="#map_page" class="ui-btn ui-mini ui-btn-inline waves-effect waves-button waves-effect waves-button"><i class="zmdi zmdi-my-location" >&nbsp;</i><i id="fvw_user_location_input"> Buscando ubicación..</i></a>
 
 			</div>
 			<div style="display:none;">
@@ -238,6 +238,7 @@
 	<!-- Map Page -->
 	<div id="map_page" data-role="page">
 		<div data-role="header" data-position="fixed">
+			<a href="#home" id="set_location_by_map" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay='1.2s'><i class="zmdi zmdi-check"></i></a>
 			<a data-role="button" role="button" data-rel="back" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-arrow-back"></i></a>
 			<h1>Mapa</h1>
 		</div>
@@ -310,7 +311,7 @@
 
 	</div>
 
-	<!-- search page -->
+	<!-- Filter page -->
 	<div data-role="page" id="search-page">
 		<div data-role="header" data-position="fixed">
 

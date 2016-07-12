@@ -1,0 +1,91 @@
+{
+    "!name": "uk.co.workingedge.phonegap.plugin.launchnavigator",
+    "!define": {
+        "!modules": {
+            "Common": {
+                "PLATFORM": {
+                    "ANDROID": "string",
+                    "IOS": "string",
+                    "WINDOWS": "string"
+                },
+                "APP": {
+                    "USER_SELECT": "string",
+                    "APPLE_MAPS": "string",
+                    "GOOGLE_MAPS": "string",
+                    "WAZE": "string",
+                    "CITYMAPPER": "string",
+                    "NAVIGON": "string",
+                    "TRANSIT_APP": "string",
+                    "YANDEX": "string",
+                    "UBER": "string",
+                    "TOMTOM": "string",
+                    "BING_MAPS": "string",
+                    "SYGIC": "string",
+                    "HERE_MAPS": "string",
+                    "MOOVIT": "string"
+                },
+                "APPS_BY_PLATFORM": {
+                    "<i>": "[string]"
+                },
+                "APP_NAMES": {
+                    "<i>": "string"
+                },
+                "TRANSPORT_MODE": {
+                    "DRIVING": "string",
+                    "WALKING": "string",
+                    "BICYCLING": "string",
+                    "TRANSIT": "string"
+                },
+                "TRANSPORT_MODES": {
+                    "<i>": {
+                        "<i>": "[string, string]"
+                    }
+                },
+                "SUPPORTS_START": {
+                    "<i>": "[string]"
+                },
+                "SUPPORTS_START_NAME": {
+                    "<i>": "[string]"
+                },
+                "SUPPORTS_DEST_NAME": {
+                    "<i>": "[string]"
+                },
+                "SUPPORTS_LAUNCH_MODE": {
+                    "<i>": "[string, string]"
+                },
+                "COORDS_REGEX": "+RegExp",
+                "navigate": "fn()",
+                "getAppDisplayName": "fn(app: ?) -> string",
+                "getAppsForPlatform": "fn(platform: ?) -> [string]",
+                "supportsTransportMode": "fn(app: ?, platform: ?) -> bool",
+                "getTransportModes": "fn(app: ?, platform: ?) -> [?]",
+                "supportsLaunchMode": "fn(app: ?, platform: ?) -> bool",
+                "supportsStart": "fn(app: ?, platform: ?) -> bool",
+                "supportsStartName": "fn(app: ?, platform: ?) -> bool",
+                "supportsDestName": "fn(app: ?, platform: ?) -> bool",
+                "userSelect": "fn(destination: ?, options: !modules.Common.userSelect.!1)",
+                "util": {
+                    "arrayContainsValue": "fn(a: [string, string], obj: ?) -> bool",
+                    "objectContainsKey": "fn(o: ?, key: ?) -> bool",
+                    "objectContainsValue": "fn(o: ?, value: ?) -> bool",
+                    "countKeysInObject": "fn(o: ?) -> number",
+                    "isValidApp": "fn(app: ?) -> bool",
+                    "isValidPlatform": "fn(platform: ?) -> bool",
+                    "isValidTransportMode": "fn(transportMode: ?) -> bool",
+                    "validateApp": "fn(app: ?)",
+                    "validatePlatform": "fn(platform: ?)",
+                    "validateTransportMode": "fn(transportMode: ?)",
+                    "extractCoordsFromLocationString": "fn(location: [?, ?]) -> [?, ?]"
+                }
+            }
+        },
+        "!modules.Common.getTransportModes.!ret": "[?]",
+        "!modules.Common.userSelect.!1": {
+            "errorCallback": "fn()",
+            "app": "string"
+        },
+        "!modules.Common.util.extractCoordsFromLocationString.!0": "[?, ?]"
+    },
+    "!plugin-version": "3.1.1",
+    "launchnavigator": "!modules.Common"
+}

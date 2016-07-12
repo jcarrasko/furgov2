@@ -261,27 +261,25 @@ spotService.updateFavourite = function (id, callback) {
 
 		if (spot.id == id) {
 
-			if (spot.favourite == 0) {
+			if (spot.favourite == 0 ) {
 				favourite = 1;
-			} else {
-				favourite = 0;
-			}
- 
-			if (callback !== null) {
-				callback();
-			}
+			}  
+			
 		}
 	});
 
 
 	spotService.db.transaction(function (tx) {
 
-		tx.executeSql("UPDATE SPOTS set favourite=? WHERE id=?", [favourite, id]);
+		tx.executeSql("UPDATE SPOTS set favourite=? WHERE id=?", [favourite, id],function (tx, results) {spotService.loadSpotsFromDatabase(callback()); });
+	 	
 
 
 	}, function (err) {
 		console.log("spotService.Error updating the database , favourite: " + err.message);
 	});
+	
+
 
 };
 

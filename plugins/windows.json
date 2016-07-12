@@ -18,6 +18,9 @@
         },
         "cordova-plugin-device": {
             "PACKAGE_NAME": "HelloCordova"
+        },
+        "uk.co.workingedge.phonegap.plugin.launchnavigator": {
+            "PACKAGE_NAME": "HelloCordova"
         }
     },
     "dependent_plugins": {}

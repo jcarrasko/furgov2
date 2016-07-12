@@ -17,7 +17,7 @@ var map;
 	furgovw.MODE_FAV = "Favoritos";
 	furgovw.MODE_MAP = "Mapa";
 	furgovw.MODE_NEAR = "Proximas";
-	furgovw.MODE_CUSTOM = "Custom";
+	furgovw.MODE_FILTER = "Filter";
 
 	furgovw.mode = furgovw.MODE_INIT;
 
@@ -81,6 +81,16 @@ var map;
 
 	};
 
+	/*
+	 * Function called for init the device
+	 */
+
+	furgovw.setMode = function (mode) {
+
+
+
+	};
+
 
 	/*
 	 * Adds the anchors 
@@ -104,6 +114,10 @@ var map;
 				furgovw.setFilter();
 			});
 
+		$('#set_location_by_map') // needed to check
+			.on('click', function () {
+				furgovw.setLocationByMap();
+			});
 
 		$('#show_prefs') // needed to check
 			.on('click', function () {
@@ -116,20 +130,37 @@ var map;
 		});
 
 
-		$('#map_page').on('pagebeforehide', function () {
-			furgovw.userLatitude = furgovw.marker.position.lat();
-			furgovw.userLongitude = furgovw.marker.position.lng();
+		/*$('#map_page').on('pagebeforehide', function () {
+
+
+			// Not used method 
+			//furgovw.userLatitude = furgovw.marker.position.lat();
+			//furgovw.userLongitude = furgovw.marker.position.lng();
 
 
 			//Get user location
-			console.log('Starting to get location...');
+			//console.log('Starting to get location...');
 			//geoService.getAddress(furgovw.marker.position.lat(), furgovw.marker.position.lng(), furgovw.setLocation);
 
 
-		});
+		});*/
 
 	};
 
+
+	/*
+	 * Set location by map
+	 */
+
+	furgovw.setLocationByMap = function () {
+
+		furgovw.userLatitude = furgovw.marker.position.lat();
+		furgovw.userLongitude = furgovw.marker.position.lng();
+
+		geoService.setLocationByMap(connectionService.isOnline(), furgovw.setLocation, furgovw.userLatitude, furgovw.userLongitude);
+
+
+	};
 
 	/*
 	 * Filter
@@ -140,9 +171,8 @@ var map;
 
 		var typeFilter = $('#search_typeb').val();
 		var distanceFilter = $('#search_distanceb').val();
+		furgovw.mode = furgovw.MODE_FILTER;
 
-
-		//geoService.getCurrentLocation(connectionService.isOnline(), furgovw.setLocation);
 		spotService.loadFilteredSpots(distanceFilter, typeFilter, furgovw.loadAllSpots);
 
 	};
@@ -209,13 +239,16 @@ var map;
 		$('#fvw_location_name').html(my_place);
 
 
+
 		spotService.updateSpotDistance(currentLocation, furgovw.loadAllSpots);
 
 
 		$('a#fvw_all_spots_button')
 			.attr('href', '#search-page');
 
-		// map.setCenter(initialLocation);
+
+		map.setCenter(furgovw.latLng);
+
 
 	};
 
@@ -269,13 +302,9 @@ var map;
 
 		$.each(spots, function (index, spot) {
 
-
-
 			// Componize the card
 
 			$('#spots_listview').append(furgovw.getSimpleSpotCard(spot));
-
-
 			$('#spots_list_list')
 				.listview('refresh', true);
 
@@ -284,6 +313,17 @@ var map;
 
 	};
 
+
+	/*
+	 * Navigates from to position using the plugin
+	 */
+
+	furgovw.navigateTo = function (toLatitude, toLongitude) {
+
+		launchnavigator.navigate([toLatitude, toLongitude]);
+
+
+	};
 
 	/*
 	 * Load map and update poistion
@@ -299,7 +339,10 @@ var map;
 			spot.description = "Sin descripción";
 		}
 
-		var geoUrl = "geo:" + spot.latitude + "," + spot.longitude;
+
+		var geoUrl = "javascript:furgovw.navigateTo(" + spot.latitude + "," + spot.longitude + ")";
+
+
 		var accent = "";
 		if (spot.favourite == 1) {
 			accent = "clr-btn-accent-red";
@@ -407,14 +450,11 @@ var map;
 		if (furgovw.mode == furgovw.MODE_FAV) {
 			spotService.updateFavourite(id, furgovw.getFavourites);
 		} else {
-
-			spotService.updateFavourite(id, null);
-
+			spotService.updateFavourite(id,function () {}) ;
 		}
 
 
-	};
-
+	};						
 
 	/*
 	 * Load spots from furgovw API
@@ -457,7 +497,7 @@ var map;
 					accent = "clr-btn-accent-red";
 				}
 
-				var geoUrl = "geo:" + this.latitude + "," + this.longitude;
+				var geoUrl = "javascript:furgovw.navigateTo(" + this.latitude + "," + this.longitude + ")";
 
 				var card = '<div class="furgovwSpot">' +
 					'<div class="card-media"><img src="data/thumbs/' + this.id + '.jpg"></div>' +
@@ -527,7 +567,7 @@ var map;
 
 				$('p#fvw_spot_msg_body')
 					.html(furgovw.removeBadTags(spot.body));
-				// .html(furgovw.removeBadTags(spot.destomtom));
+
 			}
 		});
 	};

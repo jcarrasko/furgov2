@@ -6,7 +6,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "",
       "projectGuid": "a1301560-20c4-4396-bb6c-41e7fa359474",
-      "lastModifiedDate": 1465560180681,
+      "lastModifiedDate": 1468174226788,
       "creationDate": 1440369313409
     },
     "sourceDirectory": "www",
@@ -57,7 +57,8 @@
         "topLevel": true,
         "checksum": "927290ca",
         "gitref": "",
-        "description": "Cordova Device Plugin"
+        "description": "Cordova Device Plugin",
+        "cordovaVersion": ">=3.0.0"
       },
       {
         "id": "cordova-plugin-splashscreen",
@@ -74,7 +75,8 @@
         "topLevel": true,
         "checksum": "452a4659",
         "gitref": "",
-        "description": "Cordova Splashscreen Plugin"
+        "description": "Cordova Splashscreen Plugin",
+        "cordovaVersion": ">=3.0.0"
       },
       {
         "id": "cordova-plugin-geolocation",
@@ -96,7 +98,8 @@
         "topLevel": true,
         "checksum": "aa7be91c",
         "gitref": "",
-        "description": "Cordova Geolocation Plugin"
+        "description": "Cordova Geolocation Plugin",
+        "cordovaVersion": ">=3.0.0"
       },
       {
         "id": "cordova-plugin-network-information",
@@ -118,7 +121,54 @@
         },
         "description": "Cordova Network Information Plugin",
         "data": {},
-        "dependedBy": []
+        "dependedBy": [],
+        "cordovaVersion": ">=3.0.0"
+      },
+      {
+        "id": "cordova-plugin-actionsheet",
+        "name": "ActionSheet",
+        "version": "2.2.2",
+        "originType": "cordova.io",
+        "origin": "cordova-plugin-actionsheet",
+        "gitref": "",
+        "paramvals": {},
+        "sourceLocation": "plugins/cordova-plugin-actionsheet",
+        "selectedState": "Included",
+        "checksum": "e8219433",
+        "dependsOn": [],
+        "topLevel": false,
+        "cordovaVersion": ">=3.0.0",
+        "author": "Eddy Verbruggen",
+        "permissions": {},
+        "description": "Show a sheet of options the user can choose from.",
+        "data": {},
+        "dependedBy": [
+          "uk.co.workingedge.phonegap.plugin.launchnavigator"
+        ],
+        "custom": "true"
+      },
+      {
+        "id": "uk.co.workingedge.phonegap.plugin.launchnavigator",
+        "name": "Launch Navigator",
+        "version": "3.1.1",
+        "originType": "cordova.io",
+        "origin": "uk.co.workingedge.phonegap.plugin.launchnavigator",
+        "gitref": "",
+        "paramvals": {},
+        "sourceLocation": "plugins/uk.co.workingedge.phonegap.plugin.launchnavigator",
+        "selectedState": "Included",
+        "checksum": "19be66a3",
+        "dependsOn": [
+          "cordova-plugin-actionsheet"
+        ],
+        "topLevel": true,
+        "cordovaVersion": ">=4.0.0",
+        "author": "Dave Alden",
+        "permissions": {},
+        "description": "Cordova/Phonegap plugin to navigate to a destination using native navigation apps on Android, iOS, and Windows Phone",
+        "data": {},
+        "dependedBy": [],
+        "custom": "true"
       }
     ],
     "serviceMethods": [],
@@ -302,8 +352,8 @@
           "Fullscreen": true
         },
         "isActive_": true,
-        "appName_": "furgoperfectos",
-        "appID_": "org.furgoperfectos",
+        "appName_": "Furgoperfectos Go",
+        "appID_": "org.asdelivered.furgoperfectos",
         "appAccess_": {
           "mode": "whitelist",
           "network": [
@@ -313,7 +363,8 @@
             "geo:*"
           ],
           "navigation": [
-            "geo:*"
+            "geo:*",
+            "http://www.furgovw.org"
           ],
           "properties": {}
         },
@@ -347,8 +398,8 @@
           },
           {
             "relPath": "res/drawable-xhdpi/screen.9.png",
-            "density": "ldpi",
-            "height": 426,
+            "density": "mdpi",
+            "height": 470,
             "width": 320,
             "orientation": "portrait"
           },
@@ -363,11 +414,11 @@
         "addlPermissions_": "",
         "excludedLibraries_": "",
         "certificateId_": "RkOwA48FTUSdECbnMsv9zw2",
-        "appVersion_": "0.5",
+        "appVersion_": "0.8",
         "appVersionCode_": "1",
         "crosswalkVersion_": "16",
         "cordovaCLIVersion_": "5.4.1",
-        "appDescription_": "Furgoperfectos directory app",
+        "appDescription_": "Furgoperfectos Go for Offline use",
         "appAuthor_": "jcarrasko"
       }
     },

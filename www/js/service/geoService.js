@@ -130,6 +130,20 @@ geoService.getAddress = function (latitude, longitude, is_online, callback) {
 
 };
 
+/*
+ * Get's the adress via Google Apps API
+ */
+
+geoService.setLocationByMap = function (is_online, callback, latitude, longitude) {
+
+	//Get user location
+	console.log('geoService::Set location by Map.');
+	
+	geoService.getAddress(latitude, longitude, is_online, callback);
+ 
+
+};
+
 
 
 /*
