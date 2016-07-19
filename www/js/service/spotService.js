@@ -39,9 +39,7 @@ spotService.initService = function () {
 
 	// Database Stuff
 	spotService.db = spotService.openDatabase();
-
-
-
+ 
 	var spots = [];
 	spotService.db.transaction(function (tx) {
 		tx.executeSql('SELECT * FROM SPOTS ORDER BY name', [], function (tx, results) {
