@@ -95,19 +95,10 @@ spotService.dropDatabase = function () {
  */
 spotService.createDatabase = function () {
 
-	/*TODO remove from here, must go update
-	spotService.db.transaction(function (tx) {
-		tx.executeSql('DROP TABLE SPOTS');
-	});*/
-
 	// Creates the Database if no Exist
 	spotService.db.transaction(function (tx) {
 
-
-		//tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real, distance integer, country string, area string, html text,htmlp text,link text,image text,author text,width integer,lenght integer,description text,id_member text, date text,topic_id integer, favourite integer)");
-
 		tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real, distance integer, link text,image text,author text,description text, favourite integer)");
-
 
 
 	}, function (err) {
@@ -228,9 +219,7 @@ spotService.updateSpotDistance = function (currentLocation, callback) {
  */
 
 spotService.updateSpotDistanceCallback = function (currentLocation, spots, callback) {
-
-	//console.log("Updating distance..");
-
+ 
 	spotService.db.transaction(function (tx) {
 
 		$.each(spots, function (index, spot) {

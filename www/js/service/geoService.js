@@ -178,15 +178,15 @@ geoService.getCurrentLocation = function (is_online, callback) {
 		}, function () {
 
 
-			if (errorFlag === true) {
+			//if (errorFlag === true) {
 				console.log("Geolocation service failed.");
 
-			} else {
-				console.log("Your browser doesn't support geolocation. We've placed you in Barcelona.");
+			//} else {
+			//	console.log("Your browser doesn't support geolocation. We've placed you in Barcelona.");
 
-			}
+			//}
 			map.setCenter(geoService.defaultLocation);
-
+			callback(null);
 
 		});
 
@@ -197,6 +197,7 @@ geoService.getCurrentLocation = function (is_online, callback) {
 		popErrorMessage('Lo siento, no consigo encontrar tu localización');
 
 		map.setCenter(geoService.defaultLocation);
+		callback(null);
 
 	}
 

@@ -7,19 +7,23 @@
     "texts": {
       "title": "Furgoperfectos GO",
       "features": [
-        ""
+        "geolocalización de furgoperfectos"
       ],
       "short-description": "Los furgoperfectos para llevar en ruta",
-      "full-description": "",
+      "full-description": "Es una aplicación pensada para llevar en ruta, y poder buscar los furgoperfectos aún si no hay cobertura o no hay datos (p.eg. en roaming). También esta pensada para poder lanzar el GPS que tengas instalado directamente desde la aplicación, evitando tener que ir cargando los spots en las aplicaciones de navegación. Como características de la versión 1.0:\n\n* Buscar los furgoperfectos más próximos a la localización o a un punto indicado en el mapa\n* Buscar en el mapa\n* Filtrar por distancia al punto y por tipo de furgoperfecto\n* Añadirlos a favoritos\n* Lanzar directamente tu aplicacion GPS para ir al furgoperfecto. Puedes elegir el navegador que quieres usar.\n* Abrir el enlace de furgoperfecto en el foro www.furgovw.com con la descripción del furgoperfectos",
       "keywords": "furgoperfecto, furgovw, camper, spots",
       "recent-changes": "",
       "privacy-policy": "",
       "eula": ""
     },
     "images": {
-      "screenshots": [],
-      "app-icon-small": "",
-      "app-icon": "",
+      "screenshots": [
+        "www/res/screenshots/sc-filter.png",
+        "www/res/screenshots/sc-list.png",
+        "www/res/screenshots/sc-map.png"
+      ],
+      "app-icon-small": "www/res/icon-114/icon.png",
+      "app-icon": "www/res/icon-512/icon.png",
       "small-promo": "",
       "large-promo": ""
     },
@@ -28,10 +32,10 @@
     }
   },
   "packages": {
-    "apk-file": "",
-    "zip-xdk-compliant": false,
-    "zip-file": "",
-    "secondary-apk-file": ""
+    "apk-file": "../../../Downloads/cordova_project-x86.android.20160712233355.apk",
+    "zip-xdk-compliant": true,
+    "zip-file": "../../../Downloads/furgowww.cordova.crosswalk.201607123142.zip",
+    "secondary-apk-file": "../../../Downloads/cordova_project-armv7.android.20160712233413.apk"
   },
   "support": {
     "email": "",
@@ -40,22 +44,27 @@
   "testing-instructions": "",
   "description-es_es": {
     "texts": {
-      "title": "Furgoperfectos GO",
+      "title": "Furgoperfectos & GO",
       "features": [
         "geolocalización de furgoperfectos",
         "guardar como favoritos"
       ],
       "short-description": "Los furgoperfectos para llevar en ruta",
-      "full-description": "Es una aplicación pensada para llevar en ruta, y poder buscar entre los furgoperfectos. Esta versión , permite:\n\n* Buscar los furgoperfectos próximos\n* Buscar por mapa\n* Filtrar por distancia y tipo\n* Buscar offline ( guarda una copia en el dispositivo)\n* Añadirlos a favoritos\n* Lanzar directamente tu aplicacion GPS para ir al furgoperfecto\n* Abrir el enlace de furgoperfecto con el furgoperfecto\n",
+      "full-description": "Es una aplicación pensada para llevar en ruta, y poder buscar los furgoperfectos aún si no hay cobertura o no hay datos (p.eg. en roaming). También esta pensada para poder lanzar el GPS que tengas instalado directamente desde la aplicación, evitando tener que ir cargando los spots en las aplicaciones de navegación. Como características de la versión 1.0:\n\n* Buscar los furgoperfectos más próximos a la localización o a un punto indicado en el mapa\n* Buscar en el mapa\n* Filtrar por distancia al punto y por tipo de furgoperfecto\n* Añadirlos a favoritos\n* Lanzar directamente tu aplicacion GPS para ir al furgoperfecto. Puedes elegir el navegador que quieres usar.\n* Abrir el enlace de furgoperfecto en el foro www.furgovw.com con la descripción del furgoperfecto\n\n \n",
       "keywords": "furgoperfectos, furgovw, camper",
-      "recent-changes": "",
+      "recent-changes": "1.0 Versión inicial. ",
       "privacy-policy": "",
       "eula": ""
     },
     "images": {
-      "screenshots": [],
-      "app-icon-small": "",
-      "app-icon": "",
+      "screenshots": [
+        "www/res/screenshots/sc-list.-2.png",
+        "www/res/screenshots/sc-map.png",
+        "www/res/screenshots/sc-filter.png",
+        "www/res/screenshots/sc-list.png"
+      ],
+      "app-icon-small": "www/res/icon-114/icon.png",
+      "app-icon": "www/res/icon-512/icon.png",
       "small-promo": "",
       "large-promo": ""
     },

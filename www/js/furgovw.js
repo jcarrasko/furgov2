@@ -214,13 +214,7 @@ var map;
 
 
 	};
-
-
-
-
-
-
-
+ 
 	/*
 	 * Callback function used to set current address via google APIS
 	 */
@@ -228,6 +222,20 @@ var map;
 	furgovw.setLocation = function (currentLocation) {
 
 		console.log(currentLocation);
+		
+		if (currentLocation === null){
+			
+			var my_place="No se ha podido determinar la localización."
+			$('#fvw_user_location_input').text(my_place);
+			$('#fvw_location_name').html(my_place);
+			
+			
+			
+			spotService.loadSpotsFromDatabase(furgovw.loadAllSpots);
+			return;
+			
+		}
+		
 
 		furgovw.currentLocation = currentLocation;
 		furgovw.userLatitude = currentLocation.latitude;
@@ -263,8 +271,6 @@ var map;
 			title: "Tu posicion"
 		});
 		furgovw.marker.setMap(map);
-
-
 	};
 
 
@@ -309,14 +315,11 @@ var map;
 
 		if (spots.length === 0) {
 
-			
 			if(furgovw.mode==furgovw.MODE_FAV){
 				$('#spots_listview').append("No tienes favoritos.");
 			}else{
 				$('#spots_listview').append("No se han encontrado resultados próximos con el criterio actual. Prueba cambiando los filtros.");
 			}
-			
-			
 			
 			console.log("No Spots in the spots list"); // TODO  what to do ?
 			return;
@@ -331,7 +334,6 @@ var map;
 			$('#spots_list_list')
 				.listview('refresh', true);
 
-
 		});
 
 	};
@@ -342,9 +344,7 @@ var map;
 	 */
 
 	furgovw.navigateTo = function (toLatitude, toLongitude) {
-
 		launchnavigator.navigate([toLatitude, toLongitude]);
-
 
 	};
 
