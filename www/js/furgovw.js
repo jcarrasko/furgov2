@@ -214,7 +214,7 @@ var map;
 
 
 	};
- 
+
 	/*
 	 * Callback function used to set current address via google APIS
 	 */
@@ -222,20 +222,20 @@ var map;
 	furgovw.setLocation = function (currentLocation) {
 
 		console.log(currentLocation);
-		
-		if (currentLocation === null){
-			
-			var my_place="No se ha podido determinar la localización."
+
+		if (currentLocation === null) {
+
+			var my_place = "No se ha podido determinar la localización."
 			$('#fvw_user_location_input').text(my_place);
 			$('#fvw_location_name').html(my_place);
-			
-			
-			
+
+
+
 			spotService.loadSpotsFromDatabase(furgovw.loadAllSpots);
 			return;
-			
+
 		}
-		
+
 
 		furgovw.currentLocation = currentLocation;
 		furgovw.userLatitude = currentLocation.latitude;
@@ -315,12 +315,12 @@ var map;
 
 		if (spots.length === 0) {
 
-			if(furgovw.mode==furgovw.MODE_FAV){
+			if (furgovw.mode == furgovw.MODE_FAV) {
 				$('#spots_listview').append("No tienes favoritos.");
-			}else{
+			} else {
 				$('#spots_listview').append("No se han encontrado resultados próximos con el criterio actual. Prueba cambiando los filtros.");
 			}
-			
+
 			console.log("No Spots in the spots list"); // TODO  what to do ?
 			return;
 		}
@@ -453,73 +453,41 @@ var map;
 			}
 		});
 
-
-		var spots = spotService.getAllSpots();
-
-		furgovw.addSpotsToMap(spots);
+ 
+		furgovw.addSpotsToMap(spotService.getAllSpots());
 
 	};
 
 
-	/* 
-    / Switch Favorite
-    */
 
-	furgovw.toggleFavourite = function (id, object) {
-
-		var anchorid = "#anchor" + id;
-		$(anchorid).toggleClass("clr-btn-accent-red");
-
-		if (furgovw.mode == furgovw.MODE_FAV) {
-			spotService.updateFavourite(id, furgovw.getFavourites);
-		} else {
-			spotService.updateFavourite(id, function () {});
-		}
-
-
-	};
-	
-	
-		furgovw.toggleFavouriteMap = function (id, object) {
-
-		var anchorid = "#anchor_map" + id;
-		$(anchorid).toggleClass("clr-btn-accent-red");
-
-		if (furgovw.mode == furgovw.MODE_FAV) {
-			spotService.updateFavourite(id, furgovw.getFavourites);
-		} else {
-			spotService.updateFavourite(id, function () {});
-		}
-
-
-	};
 
 	/*
 	 * Load spots from furgovw API
 	 */
 	furgovw.addSpotsToMap = function (spots) {
 
+		console.log("spots in addSpotsToMap");
+		console.log(spots);
 
+		for (var x = 0; x < spots.length; x++) {
 
-		for (var x = 0; x < furgovw.spots.length; x++) {
+			var spot = spots[x];
 
-			var spot = furgovw.spots[x];
-
-			var latlng = new google.maps.LatLng(furgovw.spots[x].latitude, furgovw.spots[x].longitude);
+			var latlng = new google.maps.LatLng(spots[x].latitude, spots[x].longitude);
 
 			var marker = new google.maps.Marker({
 				position: latlng,
-				latitude: furgovw.spots[x].latitude,
-				longitude: furgovw.spots[x].longitude,
-				distance: furgovw.spots[x].distance,
-				description: furgovw.spots[x].description,
-				favourite: furgovw.spots[x].favourite,
-				name: furgovw.spots[x].name,
-				id: furgovw.spots[x].id,
-				link: furgovw.spots[x].link,
-				image: furgovw.spots[x].image,
-				autor: furgovw.spots[x].autor,
-				icon: furgovw.icons[furgovw.spots[x].type]
+				latitude: spots[x].latitude,
+				longitude: spots[x].longitude,
+				distance: spots[x].distance,
+				description: spots[x].description,
+				favourite: spots[x].favourite,
+				name: spots[x].name,
+				id: spots[x].id,
+				link: spots[x].link,
+				image: spots[x].image,
+				autor: spots[x].autor,
+				icon: furgovw.icons[spots[x].type]
 
 			});
 			this.markers.push(marker);
@@ -566,6 +534,39 @@ var map;
 		$('.loading').hide();
 	};
 
+
+	/* 
+    / Switch Favorite
+    */
+
+	furgovw.toggleFavourite = function (id, object) {
+
+		var anchorid = "#anchor" + id;
+		$(anchorid).toggleClass("clr-btn-accent-red");
+
+		if (furgovw.mode == furgovw.MODE_FAV) {
+			spotService.updateFavourite(id, furgovw.getFavourites);
+		} else {
+			spotService.updateFavourite(id, function () {});
+		}
+
+
+	};
+
+
+	furgovw.toggleFavouriteMap = function (id, object) {
+
+		var anchorid = "#anchor_map" + id;
+		$(anchorid).toggleClass("clr-btn-accent-red");
+
+		if (furgovw.mode == furgovw.MODE_FAV) {
+			spotService.updateFavourite(id, furgovw.getFavourites);
+		} else {
+			spotService.updateFavourite(id, function () {});
+		}
+
+
+	};
 
 	/* 
 	    / Shows the detail. Must be deprecated ? is outdated

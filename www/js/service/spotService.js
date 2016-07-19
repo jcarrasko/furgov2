@@ -52,7 +52,6 @@ spotService.initService = function () {
 				}
 			}
 
-			// callback to the main function
 			spotService.allSpots = spots;
 
 		});
