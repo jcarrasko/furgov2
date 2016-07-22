@@ -39,6 +39,9 @@ spotService.initService = function () {
 
 	// Database Stuff
 	spotService.db = spotService.openDatabase();
+	
+	// for testing
+	//spotService.dropDatabase();
  
 	var spots = [];
 	spotService.db.transaction(function (tx) {
@@ -54,10 +57,11 @@ spotService.initService = function () {
 
 		});
 	}, function (err) {
-
-
+		console.log("populating DB ");
+ 
 		spotService.createDatabase();
 		spotService.updateDatabaseFromSource();
+ 
 	});
 
 
@@ -97,6 +101,8 @@ spotService.createDatabase = function () {
 
 		tx.executeSql("CREATE TABLE IF NOT EXISTS SPOTS ( id integer primary key,type integer,name text,latitude real,longitude real, distance integer, link text,image text,author text,description text, favourite integer)");
 
+		console.log ("database created");
+		
 
 	}, function (err) {
 		console.log("spotService.Error Creating the database" + err.message);
@@ -115,7 +121,7 @@ spotService.updateDatabaseFromSource = function () {
 	console.log("spotService. Its needed to update the Database from source");
 	mapApiUrl = spotService.getJsonSource();
 
-
+	console.log("spotService. updating from :" + mapApiUrl);
 	// Querying the source
 
 	$.ajaxSetup({
@@ -124,9 +130,11 @@ spotService.updateDatabaseFromSource = function () {
 		async: false
 	});
 
+ 
 
 	$.getJSON(mapApiUrl, function (spots) {
 
+		console.log("spotService. calling update *2");
 		spotService.updateDatabase(spots, null);
 
 	}, function (error) {
@@ -145,6 +153,7 @@ spotService.updateDatabaseFromSource = function () {
 
 spotService.updateDatabase = function (jsonSpotList, callback) {
 
+	console.log("updating DB");
 	spotService.db.transaction(function (tx) {
 
 		var i;
@@ -159,7 +168,7 @@ spotService.updateDatabase = function (jsonSpotList, callback) {
 			tx.executeSql("INSERT OR REPLACE INTO SPOTS (id,type, name, latitude, longitude, description,link,author,favourite) VALUES (?,?,?,?,?,?,?,?,?)", [jsonSpot.id, jsonSpot.icono, jsonSpot.nombre, jsonSpot.lng, jsonSpot.lat, description, jsonSpot.link, jsonSpot.author, 0]);
 
 		}
-
+ 
 		spotService.loadSpotsFromDatabase(callback);
 
 	}, function (err) {
